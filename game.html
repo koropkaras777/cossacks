@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Як козаки</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="game">
+            <div class="game-area" id="area">
+
+            </div>
+        </div>
+        <div class="footer">
+            <div class="navigation">
+                <div class="bet-area">
+                    <div class="bet-box">
+                        <div class="bet-text">Ставка</div>
+                        <div class="bet-size">
+                            <div class="betChange-button">
+                                <div class="bet-down" onclick="betDown()">-</div>
+                            </div>
+                            <div class="bet" id="bet">10</div>
+                            <div class="betChange-button">
+                                <div class="bet-up" onclick="betUp()">+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spin-area">
+                    <div class="spin-button" id="spinButton" onclick="spin()"></div>
+                </div>
+                <div class="won-navigation">
+                    <div class="balance">
+                        <div class="balance-text">Баланс</div>
+                        <div class="balance-area" id="balance">10000</div>
+                    </div>
+                    <div class="won">
+                        <div class="won-text">Виграш</div>
+                        <div class="won-area" id="won">0</div>
+                    </div>
+                    <!-- <div class="bonus-buy">Придбати бонус</div> -->
+                </div>
+            </div>
+        </div>
+        <div class="music-navigation">
+            <div class="music-box">
+                <div class="music-button" onclick="musicSelected()" id="musicButton"></div>
+            </div>
+        </div>
+        <div class="bigWinBoard" id="bigWinBoard">
+            <div class="bigWinBoard-background"></div>
+            <div class="bigWinBoard-text">Великий виграш!</div>
+            <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
+            
+            
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
