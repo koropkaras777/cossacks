@@ -7,7 +7,12 @@ body {
     -khtml-user-select: none;    /* Konqueror */
     -moz-user-select: none;      /* Firefox */
     -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;         
+    user-select: none; 
+    background-image: url(images/Background.png);
+    background-repeat: no-repeat;
+    background-size: 2900px;    
+    background-position-y: 0;
+    background-position-x: 72%;
 }
 .game {
     width: 100%;
@@ -76,16 +81,24 @@ body {
     justify-content: center;
 }
 
-.music-navigation {
+.middle-navigation {
     position: absolute;
     bottom: 170px;
     left: 15px;
 }
-.music-box {
+.middle-box {
+    width: 230px;
+    height: 66px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.middleBoxButton {
     width: 66px;
     height: 66px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
 }
@@ -101,15 +114,39 @@ body {
     border: 2px solid red;
     opacity: 0.8;
 }
-.music-button:hover {
+.music-button:hover, .bonusBuy-button:hover, .info-button:hover {
     cursor: pointer;
     opacity: 1;
 }
-.music-button:active {
+.music-button:active, .bonusBuy-button:active, .info-button:active {
     width: 56px;
     height: 56px;
     background-size: 52px 52px;
     opacity: 1;
+}
+.bonusBuy-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: white;
+    background-image: url(images/Shopping_Kart.png);
+    background-repeat: no-repeat;
+    background-size: 58px 58px;
+    background-position: center;
+    border: 2px solid blue;
+    opacity: 0.8;
+}
+.info-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: white;
+    background-image: url(images/info.png);
+    background-repeat: no-repeat;
+    background-size: 58px 58px;
+    background-position: center;
+    border: 2px solid black;
+    opacity: 0.8;
 }
 
 .bet-size {
@@ -300,6 +337,7 @@ body {
     opacity: 0.8;
 }
 .bigWinBoard-startButton:hover {
+    cursor: pointer;
     opacity: 1;
 }
 .bigWinBoard-startButton:active {
@@ -389,11 +427,153 @@ body {
     opacity: 0.8;
 }
 .bonusGame-startButton:hover {
+    cursor: pointer;
     opacity: 1;
 }
 .bonusGame-startButton:active {
     width: 190px;
     height: 45px;
     font-size: 60px;
+    opacity: 1;
+}
+
+#betSizeBonusBuy {
+    z-index: 1;
+}
+.bonusBuy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    visibility: hidden;
+}
+.bonusBuy-text {
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    z-index: 1;
+    margin-top: 10%;
+    margin-bottom: 40px;
+}
+.bonusBuy-box {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1;
+}
+.bonusBuy-card {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-radius: 5%;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.364);
+}
+.bonusBuy-card-text {
+    font-size: 40px;
+    font-weight: bold;
+    color: rgb(61, 61, 0);
+    text-align: center;
+    z-index: 1;
+}
+.bonusBuy-card-price {
+    font-size: 36px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke: 1px rgb(0, 0, 0);
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: 10px;
+    z-index: 1;
+}
+.bonusBuy-button-area {
+    width: 140px;
+    height: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.bonusBuy-card-button {
+    width: 140px;
+    height: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: rgb(0, 0, 0) ;
+    z-index: 1;
+    padding: 15px;
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 5%;
+    background-color: rgb(255, 255, 255);
+    opacity: 0.8;
+}
+.bonusBuy-card-button:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+.bonusBuy-card-button:active {
+    width: 130px;
+    height: 24px;
+    font-size: 26px;
+    opacity: 1;
+}
+.bonusBuy-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(201, 198, 255);
+    opacity: 0.8;
+}
+.closeButtonBonusBuy-area {
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: 66px;
+    height: 66px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+.closeButtonBonusBuy {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: white;
+    background-image: url(images/close.png);
+    background-repeat: no-repeat;
+    background-size: 48px 48px;
+    background-position: center;
+    border: 2px solid rgb(0, 0, 0);
+    opacity: 0.8;
+}
+.closeButtonBonusBuy:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+.closeButtonBonusBuy:active {
+    width: 56px;
+    height: 56px;
+    background-size: 42px 42px;
     opacity: 1;
 }

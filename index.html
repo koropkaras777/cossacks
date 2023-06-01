@@ -19,7 +19,7 @@
                             <div class="betChange-button">
                                 <div class="bet-down" onclick="betDown()">-</div>
                             </div>
-                            <div class="bet" id="bet">10</div>
+                            <div class="bet" id="bet">50</div>
                             <div class="betChange-button">
                                 <div class="bet-up" onclick="betUp()">+</div>
                             </div>
@@ -32,7 +32,7 @@
                 <div class="won-navigation">
                     <div class="balance">
                         <div class="balance-text">Баланс</div>
-                        <div class="balance-area" id="balance">10000</div>
+                        <div class="balance-area" id="balance">13000</div>
                     </div>
                     <div class="won">
                         <div class="won-text">Виграш</div>
@@ -42,9 +42,17 @@
                 </div>
             </div>
         </div>
-        <div class="music-navigation">
-            <div class="music-box">
-                <div class="music-button" onclick="musicSelected()" id="musicButton"></div>
+        <div class="middle-navigation">
+            <div class="middle-box">
+                <div class="middleBoxButton">
+                    <div class="music-button" onclick="musicSelected()" id="musicButton"></div>
+                </div>
+                <div class="middleBoxButton">
+                    <div class="bonusBuy-button" onclick="bonusBuy()" id="bonusBuyButton"></div>
+                </div>
+                <div class="middleBoxButton">
+                    <div class="info-button" onclick="openInfo()" id="openInfoButton"></div>
+                </div>
             </div>
         </div>
         <div class="bigWinBoard" id="bigWinBoard">
@@ -62,6 +70,45 @@
             <div class="bonusGame-startButton-area">
                 <div class="bonusGame-startButton" id="bonusGameStartButton">Старт</div>
             </div>
+        </div>
+        <div class="bonusBuy" id="bonusBuy">
+            <div class="bonusBuy-text">Придбати безкоштовні спіни з липкими вайлдами</div>
+            <div class="bonusBuy-box">
+                <div class="bonusBuy-card">
+                    <div class="bonusBuy-card-text">10 спінів</div>
+                    <div class="bonusBuy-card-price" id="bonusBuyPrice10">Ціна 100</div>
+                    <div class="bonusBuy-button-area">
+                        <div class="bonusBuy-card-button" onclick="buy(10)">Придбати</div>
+                    </div>
+                </div>
+                <div class="bonusBuy-card">
+                    <div class="bonusBuy-card-text">15 спінів</div>
+                    <div class="bonusBuy-card-price" id="bonusBuyPrice15">Ціна 300</div>
+                    <div class="bonusBuy-button-area">
+                        <div class="bonusBuy-card-button" onclick="buy(15)">Придбати</div>
+                    </div>
+                </div>
+                <div class="bonusBuy-card">
+                    <div class="bonusBuy-card-text">20 спінів</div>
+                    <div class="bonusBuy-card-price" id="bonusBuyPrice20">Ціна 650</div>
+                    <div class="bonusBuy-button-area">
+                        <div class="bonusBuy-card-button" onclick="buy(20)">Придбати</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bet-size" id="betSizeBonusBuy">
+                <div class="betChange-button">
+                    <div class="bet-down" onclick="betDown()">-</div>
+                </div>
+                <div class="bet" id="bet2">50</div>
+                <div class="betChange-button">
+                    <div class="bet-up" onclick="betUp()">+</div>
+                </div>
+            </div>
+            <div class="closeButtonBonusBuy-area">
+                <div class="closeButtonBonusBuy" onclick="closeBonusBuy()"></div>
+            </div>
+            <div class="bonusBuy-background"></div>
         </div>
         <script src="script.js"></script>
     </body>

@@ -1,15 +1,21 @@
-let bet = 50, balance = 10000, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 13000, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let time = 50, step = 1, isLocked = false;
+let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins;
 
-let isPlaying = false, slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3');
+let isPlaying = false, isPlayingBonus = false, slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3');
 slotMusic.loop = "true";
 
 slotMusic.onplaying = () => {
     isPlaying = true;
 };
 slotMusic.onpause = () => {
+    isPlaying = false;
+};
+bonusMusic.onplaying = () => {
+    isPlaying = true;
+};
+bonusMusic.onpause = () => {
     isPlaying = false;
 };
 
@@ -27,24 +33,110 @@ let sleep = (ms) => {
 
 let updateGame = () => {
     drawSpin();
+    checkBonusBuy();
 
     let betArea = document.getElementById('bet');
+    let betAreaBB = document.getElementById('bet2');
     let balanceArea = document.getElementById('balance');
 
     betArea.innerHTML = bet;
+    betAreaBB.innerHTML = bet;
     balanceArea.innerHTML = balance;
 }
 
 let musicSelected = () => {
     let musicButton = document.querySelector('#musicButton');
 
+    
     if (isPlaying) {
-        bonusGameStarted == true ? bonusMusic.pause() : slotMusic.pause();
+        bonusGameStarted ? bonusMusic.pause() : slotMusic.pause();
         musicButton.style.border = '2px solid red';
     } else {
-        bonusGameStarted == true ? bonusMusic.play() : slotMusic.play();
+        bonusGameStarted ? bonusMusic.play() : slotMusic.play();
         musicButton.style.border = '2px solid green';
     }
+}
+
+let buy = (numOfSpins) => {
+
+    if(numOfSpins == 10 && balance >= bet * 100) {
+        balance -= bet * 99;
+        bonusBuySpins = 3;
+        bonusBuyActive = true;
+
+        let bonusBuyArea = document.querySelector("#bonusBuy");
+        let balanceArea = document.getElementById('balance');
+
+        balanceArea.innerHTML = balance;
+        bonusBuyArea.style.visibility = 'hidden';
+
+        spin();
+    }
+    if(numOfSpins == 15 && balance >= bet * 300) {
+        balance -= bet * 299;
+        bonusBuySpins = 4;
+        bonusBuyActive = true;
+
+        let bonusBuyArea = document.querySelector("#bonusBuy");
+        let balanceArea = document.getElementById('balance');
+
+        balanceArea.innerHTML = balance;
+        bonusBuyArea.style.visibility = 'hidden';
+
+        spin();
+    }
+    if(numOfSpins == 20 && balance >= bet * 650) {
+        balance -= bet * 649;
+        bonusBuySpins = 5;
+        bonusBuyActive = true;
+
+        let bonusBuyArea = document.querySelector("#bonusBuy");
+        let balanceArea = document.getElementById('balance');
+
+        balanceArea.innerHTML = balance;
+        bonusBuyArea.style.visibility = 'hidden';
+
+        spin();
+    }
+}
+
+let checkBonusBuy = () => {
+    let bonusBuyPrice10 = document.querySelector("#bonusBuyPrice10");
+    let bonusBuyPrice15 = document.querySelector("#bonusBuyPrice15");
+    let bonusBuyPrice20 = document.querySelector("#bonusBuyPrice20");
+
+    bonusBuyPrice10.innerHTML = bet * 100;
+    bonusBuyPrice15.innerHTML = bet * 300;
+    bonusBuyPrice20.innerHTML = bet * 650;
+
+    if(balance < bet * 100) {
+        bonusBuyPrice10.style.color = 'red';
+    } else {
+        bonusBuyPrice10.style.color = 'white';
+    }
+    if(balance < bet * 300) {
+        bonusBuyPrice15.style.color = 'red';
+    } else {
+        bonusBuyPrice15.style.color = 'white';
+    }
+    if(balance < bet * 650) {
+        bonusBuyPrice20.style.color = 'red';
+    } else {
+        bonusBuyPrice20.style.color = 'white';
+    }
+}
+
+let bonusBuy = () => {
+    isLocked = true;
+    let bonusBuyArea = document.querySelector("#bonusBuy");
+    bonusBuyArea.style.visibility = 'visible';
+}
+
+let closeBonusBuy = () => {
+    isLocked = false;
+
+    let bonusBuyArea = document.querySelector("#bonusBuy");
+    bonusBuyArea.style.visibility = 'hidden';
 }
 
 let outNum = (numEnd, numStart, element, isUp) => {
@@ -74,17 +166,29 @@ let outNum = (numEnd, numStart, element, isUp) => {
 
 let betUp = () => {
     if(bet < 100) {
-        outNum(bet+10, bet, '#bet', true)
+        let betArea = document.querySelector('#bet');
+        let betArea2 = document.querySelector('#bet2');
 
-        bet += 10;          
+        bet += 10;
+
+        betArea.innerHTML = bet;
+        betArea2.innerHTML = bet;
+
+        checkBonusBuy();
     }
 }
 
 let betDown = () => {
     if(bet > 10) {
-        outNum(bet-10, bet, '#bet', false)
+        let betArea = document.querySelector('#bet');
+        let betArea2 = document.querySelector('#bet2');
 
         bet -= 10;
+
+        betArea.innerHTML = bet;
+        betArea2.innerHTML = bet;
+
+        checkBonusBuy();
     }
 }
 
@@ -220,6 +324,19 @@ let spin = async () => {
         if(bonusGameStarted == true) {
             let bonusArea = document.querySelector('#bonusGameBoard');
             let bonusGameBoardValue = document.querySelector('#bonusGameBoardValue');
+
+            await sleep(500);
+
+            if(isPlaying) {
+                slotMusic.pause();
+                isPlaying = false;
+
+                musicSelected();
+            } else if(isPlaying == false) {
+                isPlaying = true;
+
+                musicSelected();
+            }
 
             bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
             bonusArea.style.visibility = "visible";
@@ -406,13 +523,39 @@ let buildSymbol = (i, j, symbol) => {
 let generateBonusGame = () => {
     let bonusChance = 173, scatters = 0; 
 
-    for(let i = 0; i < 5; i++) {
-        let scatterChance = getRandomInt(bonusChance);
-    
-        if(scatterChance >= 1 && scatterChance <= 10) {
-            let randomPosition = getRandomInt(3);
-            gameArea[randomPosition-1][i] = 14;
-            scatters++;
+    if(bonusBuyActive == true) {
+        if(bonusBuySpins == 3) {
+            for(let i = 0; i < 3; i++) {
+                let randomPosition = getRandomInt(3);
+                gameArea[randomPosition-1][i] = 14;
+                scatters++;
+            }
+        }
+
+        if(bonusBuySpins == 4) {
+            for(let i = 0; i < 4; i++) {
+                let randomPosition = getRandomInt(3);
+                gameArea[randomPosition-1][i] = 14;
+                scatters++;
+            }
+        }
+
+        if(bonusBuySpins == 5) {
+            for(let i = 0; i < 5; i++) {
+                let randomPosition = getRandomInt(3);
+                gameArea[randomPosition-1][i] = 14;
+                scatters++;
+            }
+        }
+    } else {
+        for(let i = 0; i < 5; i++) {
+            let scatterChance = getRandomInt(bonusChance);
+        
+            if(scatterChance >= 1 && scatterChance <= 10) {
+                let randomPosition = getRandomInt(3);
+                gameArea[randomPosition-1][i] = 14;
+                scatters++;
+            }
         }
     }
 
@@ -423,6 +566,8 @@ let generateBonusGame = () => {
 
         bonusGameStarted = true;
     }
+
+    bonusBuyActive = false;
 }
 
 let generateGame = () => {
