@@ -4,7 +4,7 @@ let payLines = [], payLinesIndex = 0;
 let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins;
 
 let isPlaying = false, isPlayingBonus = false, slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3');
-slotMusic.loop = "true";
+slotMusic.loop = "true", bonusMusic.loop = "true";
 
 slotMusic.onplaying = () => {
     isPlaying = true;
