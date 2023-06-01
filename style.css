@@ -290,3 +290,75 @@ body {
     border: 2px solid rgb(193, 0, 0);
     opacity: 0.8;
 }
+
+.bonusGame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+}
+.bonusGame-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(190, 184, 255);
+    opacity: 0.8;
+}
+.bonusGame-text {
+    font-size: 92px;
+    font-weight: bold;
+    color: yellow;
+    -webkit-text-stroke: 2px brown;
+    z-index: 1;
+}
+.bonusGame-value {
+    font-size: 64px;
+    font-weight: bold;
+    color: rgb(140, 250, 144);
+    -webkit-text-stroke: 2px rgb(0, 110, 11);
+    z-index: 1;
+}
+.bonusGame-startButton-area {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 100px;
+}
+.bonusGame-startButton {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    font-weight: bold;
+    color: rgb(179, 181, 255) ;
+    -webkit-text-stroke: 2px rgb(59, 0, 235);
+    z-index: 1;
+    padding: 15px;
+    border: 3px solid rgb(99, 99, 255);
+    border-radius: 5%;
+    background-color: rgb(255, 255, 255);
+    opacity: 0.8;
+}
+.bonusGame-startButton:hover {
+    opacity: 1;
+}
+.bonusGame-startButton:active {
+    width: 190px;
+    height: 45px;
+    font-size: 60px;
+    opacity: 1;
+}

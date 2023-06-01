@@ -1,7 +1,7 @@
 let bet = 50, balance = 10000, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let time = 500, step = 1;
+let time = 50, step = 1, isLocked = false;
 
 let isPlaying = false, slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3');
 slotMusic.loop = "true";
@@ -13,11 +13,10 @@ slotMusic.onpause = () => {
     isPlaying = false;
 };
 
-document.body.onkeyup = function(e) {
-    if (e.key == " " ||
+document.body.onkeyup = (e) => {
+    if ((e.key == " " ||
         e.code == "Space" ||      
-        e.keyCode == 32      
-    ) {
+        e.keyCode == 32) && isLocked == false) {
         spin();
     }
 }
@@ -71,8 +70,6 @@ let outNum = (numEnd, numStart, element, isUp) => {
 
         e.innerHTML = numStart;
     }, t);
-
-    
 }
 
 let betUp = () => {
@@ -92,26 +89,29 @@ let betDown = () => {
 }
 
 let drawPlayedLines = async () => {
-    console.log(payLinesIndex);
-    for(let i = 0; i < payLinesIndex; i++) {
-        console.log(payLines[i].length);
-
-        for(let j = 0; j < payLines[i].length; j++) {
-            let point = document.getElementById(payLines[i][j]);
-
-            point.style.backgroundColor = "yellow";
-            point.style.border = "2px solid brown";
+    try {
+        for(let c = 0; c >= 0; c++) {
+            for(let i = 0; i < payLinesIndex; i++) {
+                for(let j = 0; j < payLines[i].length; j++) {
+                    let point = document.getElementById(payLines[i][j]);
+        
+                    point.style.backgroundColor = "yellow";
+                    point.style.border = "2px solid brown";
+                }
+        
+                await sleep(500);
+        
+                for(let j = 0; j < payLines[i].length; j++) {
+                    let point = document.getElementById(payLines[i][j]);
+        
+                    point.style.backgroundColor = "white";
+                    point.style.border = "2px solid black";
+                }
+            } 
         }
-
-        await sleep(500);
-
-        for(let j = 0; j < payLines[i].length; j++) {
-            let point = document.getElementById(payLines[i][j]);
-
-            point.style.backgroundColor = "white";
-            point.style.border = "2px solid black";
-        }
-    } 
+    } catch {
+        console.log('Skip');
+    }   
 }
 
 let drawSpin = async () => {
@@ -160,12 +160,23 @@ let drawSpin = async () => {
     }
 }
 
+let spinWithSpinButton = () => {
+    if(isLocked == false) {
+        spin();
+    }
+}
+
 let spin = async () => {
+    isLocked = true;
+    // outNum(balance, balance-1, '#balance', true)
+    let bigWinBoard = document.querySelector('#bigWinBoard');
+    let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
+    let bigWinBoardText = document.querySelector('#bigWinBoardText');
     let balanceArea = document.getElementById('balance');
     bigWinBoard.style.visibility = "hidden";
-
+    
     if(balance >= bet) {
-        outNum(balance-bet, balance, '#balance', false)
+        //outNum(balance-bet, balance, '#balance', false)
 
         balance -= bet;
         balanceArea.innerHTML = balance;
@@ -178,28 +189,44 @@ let spin = async () => {
         wonArea.innerHTML = wonForSpin;
 
         if(wonForSpin > 0) {
-            outNum(balance+wonForSpin, balance, '#balance', true)
+            // outNum(balance+wonForSpin, balance, '#balance', true)
+            balance += wonForSpin;
+            balanceArea.innerHTML = balance;
+
+            if(wonForSpin/bet >= 30) {
+                bigWinBoardValue.innerHTML = wonForSpin;
+                bigWinBoard.style.visibility = "visible";
+
+                wonForSpin/bet >= 30 && wonForSpin/bet < 50 ? bigWinBoardText.innerHTML = "Великий виграш!" : bigWinBoardText;
+                wonForSpin/bet >= 50 && wonForSpin/bet < 100 ? bigWinBoardText.innerHTML = "Супер виграш!" : bigWinBoardText;
+                wonForSpin/bet >= 100 && wonForSpin/bet < 200 ? bigWinBoardText.innerHTML = "Мега виграш!" : bigWinBoardText;
+                wonForSpin/bet >= 200 ? bigWinBoardText.innerHTML = "Грандіозний виграш!" : bigWinBoardText;
+                
+                await sleep(3000);
+                bigWinBoard.style.visibility = "hidden";
+            }
+
             wonForSpin = 0;
+        }
 
-            // if(wonForSpin/bet > 30) {
-            //     let bigWinBoard = document.querySelector('#bigWinBoard');
-            //     bigWinBoard.style.visibility = "visible";
+        if(bonusGameStarted == true) {
+            let bonusArea = document.querySelector('#bonusGameBoard');
+            let bonusGameBoardValue = document.querySelector('#bonusGameBoardValue');
 
-            //     outNum(10000, 0, '#bigWinBoardValue', true)
-            //     sleep(1000);
-            //     bigWinBoard.style.visibility = "hidden";
-            // }
+            bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
+            bonusArea.style.visibility = "visible";
+        } else {
+            isLocked = false;
         }
 
         if(payLinesIndex > 0) {
-            await drawPlayedLines();
+            drawPlayedLines();
         }
     } 
 }
 
 let playSpin = () => {
     generateGame();
-    //printGameArea();
     calculateWon();
 }
 
@@ -371,7 +398,7 @@ let buildSymbol = (i, j, symbol) => {
 }
 
 let generateBonusGame = () => {
-    let bonusChance = 173, scatters = 0;
+    let bonusChance = 173, scatters = 0; 
 
     for(let i = 0; i < 5; i++) {
         let scatterChance = getRandomInt(bonusChance);
@@ -387,17 +414,6 @@ let generateBonusGame = () => {
         scatters == 3 ? bonusGameSpins = 10 : bonusGameSpins;
         scatters == 4 ? bonusGameSpins = 15 : bonusGameSpins;
         scatters == 5 ? bonusGameSpins = 20 : bonusGameSpins;
-
-        // bonuses++;
-        // if(scatters == 3) {
-        //     threescatters++;
-        // }
-        // if(scatters == 4) {
-        //     fourscatters++;
-        // }
-        // if(scatters == 5) {
-        //     fivescatters++;
-        // }
 
         bonusGameStarted = true;
     }
@@ -520,7 +536,7 @@ let calculateWon = () => {
 
         if(paySymbol != 11) {
             for(let i = 0; i < 5; i++) {
-                if(payArray[lines[line].array[i]] == paySymbol || payArray[lines[line].array[i]] == 11 || payArray[lines[line].array[i]] == 12 || payArray[lines[line].array[i]] == 13) {
+                if((payArray[lines[line].array[i]] == paySymbol || payArray[lines[line].array[i]] == 11 || payArray[lines[line].array[i]] == 12 || payArray[lines[line].array[i]] == 13) && payArray[lines[line].array[i]] != 14) {
                     counter++;
                     preArray[preArrayIndex++] = lines[line].array[i];
 
@@ -604,12 +620,10 @@ let calculateWon = () => {
 
     bonusGameWon += totalWon;
 
-    if(bonusGameStartedTrigger == true && bonusGameStarted == true) {
-        //playBonuseGame();
-    }
-    console.log('You won ' + totalWon + 'uah for this spin')
-
-    balance += totalWon;
+    // if(bonusGameStartedTrigger == true && bonusGameStarted == true) {
+    //     //playBonuseGame();
+    // }
+    console.log('You won ' + totalWon + 'uah for this spin');
 }
 
 updateGame();

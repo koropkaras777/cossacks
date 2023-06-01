@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="spin-area">
-                    <div class="spin-button" id="spinButton" onclick="spin()"></div>
+                    <div class="spin-button" id="spinButton" onclick="spinWithSpinButton()"></div>
                 </div>
                 <div class="won-navigation">
                     <div class="balance">
@@ -49,10 +49,16 @@
         </div>
         <div class="bigWinBoard" id="bigWinBoard">
             <div class="bigWinBoard-background"></div>
-            <div class="bigWinBoard-text">Великий виграш!</div>
+            <div class="bigWinBoard-text" id="bigWinBoardText">Великий виграш!</div>
             <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
-            
-            
+        </div>
+        <div class="bonusGame" id="bonusGameBoard">
+            <div class="bonusGame-background"></div>
+            <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
+            <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
+            <div class="bonusGame-startButton-area">
+                <div class="bonusGame-startButton" id="bonusGameStartButton">Старт</div>
+            </div>
         </div>
         <script src="script.js"></script>
     </body>
