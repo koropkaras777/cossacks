@@ -166,6 +166,13 @@ let spinWithSpinButton = () => {
     }
 }
 
+let continueGame = () => {
+    let bigWinBoard = document.querySelector('#bigWinBoard');
+    bigWinBoard.style.visibility = "hidden";
+
+    isLocked == false;
+}
+
 let spin = async () => {
     isLocked = true;
     // outNum(balance, balance-1, '#balance', true)
@@ -201,12 +208,13 @@ let spin = async () => {
                 wonForSpin/bet >= 50 && wonForSpin/bet < 100 ? bigWinBoardText.innerHTML = "Супер виграш!" : bigWinBoardText;
                 wonForSpin/bet >= 100 && wonForSpin/bet < 200 ? bigWinBoardText.innerHTML = "Мега виграш!" : bigWinBoardText;
                 wonForSpin/bet >= 200 ? bigWinBoardText.innerHTML = "Грандіозний виграш!" : bigWinBoardText;
-                
-                await sleep(3000);
-                bigWinBoard.style.visibility = "hidden";
             }
 
             wonForSpin = 0;
+        }
+
+        if(payLinesIndex > 0) {
+            drawPlayedLines();
         }
 
         if(bonusGameStarted == true) {
@@ -215,12 +223,10 @@ let spin = async () => {
 
             bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
             bonusArea.style.visibility = "visible";
-        } else {
-            isLocked = false;
-        }
+        } 
 
-        if(payLinesIndex > 0) {
-            drawPlayedLines();
+        if(bonusGameStarted == false && wonForSpin/bet < 30) {
+            isLocked = false;
         }
     } 
 }
