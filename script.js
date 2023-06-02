@@ -127,9 +127,11 @@ let checkBonusBuy = () => {
 }
 
 let bonusBuy = () => {
-    isLocked = true;
-    let bonusBuyArea = document.querySelector("#bonusBuy");
-    bonusBuyArea.style.visibility = 'visible';
+    if(!bonusGameStarted) {
+        isLocked = true;
+        let bonusBuyArea = document.querySelector("#bonusBuy");
+        bonusBuyArea.style.visibility = 'visible';
+    }
 }
 
 let closeBonusBuy = () => {
@@ -165,30 +167,34 @@ let outNum = (numEnd, numStart, element, isUp) => {
 }
 
 let betUp = () => {
-    if(bet < 100) {
-        let betArea = document.querySelector('#bet');
-        let betArea2 = document.querySelector('#bet2');
-
-        bet += 10;
-
-        betArea.innerHTML = bet;
-        betArea2.innerHTML = bet;
-
-        checkBonusBuy();
+    if(!bonusGameStarted) {
+        if(bet < 100) {
+            let betArea = document.querySelector('#bet');
+            let betArea2 = document.querySelector('#bet2');
+    
+            bet += 10;
+    
+            betArea.innerHTML = bet;
+            betArea2.innerHTML = bet;
+    
+            checkBonusBuy();
+        }
     }
 }
 
 let betDown = () => {
-    if(bet > 10) {
-        let betArea = document.querySelector('#bet');
-        let betArea2 = document.querySelector('#bet2');
+    if(!bonusGameStarted) {
+        if(bet > 10) {
+            let betArea = document.querySelector('#bet');
+            let betArea2 = document.querySelector('#bet2');
 
-        bet -= 10;
+            bet -= 10;
 
-        betArea.innerHTML = bet;
-        betArea2.innerHTML = bet;
+            betArea.innerHTML = bet;
+            betArea2.innerHTML = bet;
 
-        checkBonusBuy();
+            checkBonusBuy();
+        }
     }
 }
 
