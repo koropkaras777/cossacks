@@ -1,23 +1,11 @@
 let bet = 50, balance = 13000, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins;
+let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
 
-let isPlaying = false, isPlayingBonus = false, slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3');
-slotMusic.loop = "true", bonusMusic.loop = "true";
-
-slotMusic.onplaying = () => {
-    isPlaying = true;
-};
-slotMusic.onpause = () => {
-    isPlaying = false;
-};
-bonusMusic.onplaying = () => {
-    isPlayingBonus = true;
-};
-bonusMusic.onpause = () => {
-    isPlayingBonus = false;
-};
+let isPlaying = false, isPlayingBonus = false;
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3'), spinSound = new Audio('sound/spin.mp3');
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0;
 
 document.body.onkeyup = (e) => {
     if ((e.key == " " ||
@@ -47,18 +35,26 @@ let updateGame = () => {
 let musicSelected = () => {
     let musicButton = document.querySelector('#musicButton');
 
-    
-    if (isPlaying || isPlayingBonus) {
-        bonusGameStarted ? bonusMusic.pause() : slotMusic.pause();
-        musicButton.style.border = '2px solid red';
-    } else {
-        bonusGameStarted ? bonusMusic.play() : slotMusic.play();
+    if(isMusic) {
+        slotMusic.volume = 1;
+        bonusMusic.volume = 1;
+        spinSound.volume = 1;
+
         musicButton.style.border = '2px solid green';
+
+        isMusic = false;
+    } else {
+        slotMusic.volume = 0;
+        bonusMusic.volume = 0;
+        spinSound.volume = 0;
+
+        musicButton.style.border = '2px solid red';
+
+        isMusic = true;
     }
 }
 
 let buy = (numOfSpins) => {
-
     if(numOfSpins == 10 && balance >= bet * 100) {
         balance -= bet * 99;
         bonusBuySpins = 3;
@@ -246,6 +242,8 @@ let drawSpin = async () => {
         }
     }
 
+    spinSound.play();
+
     for(let i = 0; i < 15; i++) {
         let point = document.createElement('div');
         point.className = 'point';
@@ -287,27 +285,17 @@ let continueStandartGame = () => {
     let bonusGameEnded = document.querySelector("#bonusGameEnded");
     bonusGameEnded.style.visibility = "hidden";
 
-    if(isPlayingBonus) {
-        bonusMusic.pause();
-        isPlayingBonus = false;
-
-        musicSelected();
-
-    } else if(isPlayingBonus == false) {
-        isPlayingBonus = true;
-
-        musicSelected();
-    }
+    bonusMusic.pause();
+    slotMusic.play();
 
     isLocked == false;
-
-    console.log(isLocked);
-    console.log(bonusGameStarted);
 }
 
 let spin = async () => {
     isLocked = true;
-    // outNum(balance, balance-1, '#balance', true)
+
+    slotMusic.play();
+
     let bigWinBoard = document.querySelector('#bigWinBoard');
     let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
     let bigWinBoardText = document.querySelector('#bigWinBoardText');
@@ -355,16 +343,8 @@ let spin = async () => {
 
             await sleep(500);
 
-            if(isPlaying) {
-                slotMusic.pause();
-                isPlaying = false;
-
-                musicSelected();
-            } else if(isPlaying == false) {
-                isPlaying = true;
-
-                musicSelected();
-            }
+            slotMusic.pause();
+            bonusMusic.play();
 
             bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
             bonusArea.style.visibility = "visible";
