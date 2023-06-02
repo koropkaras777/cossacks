@@ -38,7 +38,6 @@
                         <div class="won-text">Виграш</div>
                         <div class="won-area" id="won">0</div>
                     </div>
-                    <!-- <div class="bonus-buy">Придбати бонус</div> -->
                 </div>
             </div>
         </div>
@@ -68,7 +67,7 @@
             <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
             <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
             <div class="bonusGame-startButton-area">
-                <div class="bonusGame-startButton" id="bonusGameStartButton">Старт</div>
+                <div class="bonusGame-startButton" id="bonusGameStartButton" onclick="playBonuseGame()">Старт</div>
             </div>
         </div>
         <div class="bonusBuy" id="bonusBuy">
@@ -110,6 +109,15 @@
             </div>
             <div class="bonusBuy-background"></div>
         </div>
+        <div class="bonusGameEnded" id="bonusGameEnded">
+            <div class="bonusGameEnded-background"></div>
+            <div class="bonusGameEnded-text">Вітаємо!</div>
+            <div class="bonusGameEnded-value" id="bonusGameEndedBoardValue">Ви виграли 10000 в 10 безкоштовних обертаннях</div>
+            <div class="bonusGameEnded-startButton-area">
+                <div class="bonusGameEnded-startButton" id="bonusGameContinueButton" onclick="continueStandartGame()">Продовжити</div>
+            </div>
+        </div>
+        <div class="freespins-area" id="freespinsArea">Залишилося 9 з 10 безкоштовних обертань</div>
         <script src="script.js"></script>
     </body>
 </html>

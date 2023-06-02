@@ -13,10 +13,10 @@ slotMusic.onpause = () => {
     isPlaying = false;
 };
 bonusMusic.onplaying = () => {
-    isPlaying = true;
+    isPlayingBonus = true;
 };
 bonusMusic.onpause = () => {
-    isPlaying = false;
+    isPlayingBonus = false;
 };
 
 document.body.onkeyup = (e) => {
@@ -48,7 +48,7 @@ let musicSelected = () => {
     let musicButton = document.querySelector('#musicButton');
 
     
-    if (isPlaying) {
+    if (isPlaying || isPlayingBonus) {
         bonusGameStarted ? bonusMusic.pause() : slotMusic.pause();
         musicButton.style.border = '2px solid red';
     } else {
@@ -277,6 +277,28 @@ let continueGame = () => {
     isLocked == false;
 }
 
+let continueStandartGame = () => {
+    let bonusGameEnded = document.querySelector("#bonusGameEnded");
+    bonusGameEnded.style.visibility = "hidden";
+
+    if(isPlayingBonus) {
+        bonusMusic.pause();
+        isPlayingBonus = false;
+
+        musicSelected();
+
+    } else if(isPlayingBonus == false) {
+        isPlayingBonus = true;
+
+        musicSelected();
+    }
+
+    isLocked == false;
+
+    console.log(isLocked);
+    console.log(bonusGameStarted);
+}
+
 let spin = async () => {
     isLocked = true;
     // outNum(balance, balance-1, '#balance', true)
@@ -346,6 +368,44 @@ let spin = async () => {
             isLocked = false;
         }
     } 
+}
+
+let playBonusSpin = async () => {
+    let bigWinBoard = document.querySelector('#bigWinBoard');
+    let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
+    let bigWinBoardText = document.querySelector('#bigWinBoardText');
+    let balanceArea = document.getElementById('balance');
+    bigWinBoard.style.visibility = "hidden";
+
+    playSpin();
+    drawSpin();
+
+    await sleep(500);
+    let wonArea = document.querySelector('#won');
+    wonArea.innerHTML = wonForSpin;
+
+    if(wonForSpin > 0) {
+        balance += wonForSpin;
+        balanceArea.innerHTML = balance;
+
+        if(wonForSpin/bet >= 30) {
+            bigWinBoardValue.innerHTML = wonForSpin;
+            bigWinBoard.style.visibility = "visible";
+
+            wonForSpin/bet >= 30 && wonForSpin/bet < 50 ? bigWinBoardText.innerHTML = "Великий виграш!" : bigWinBoardText;
+            wonForSpin/bet >= 50 && wonForSpin/bet < 100 ? bigWinBoardText.innerHTML = "Супер виграш!" : bigWinBoardText;
+            wonForSpin/bet >= 100 && wonForSpin/bet < 200 ? bigWinBoardText.innerHTML = "Мега виграш!" : bigWinBoardText;
+            wonForSpin/bet >= 200 ? bigWinBoardText.innerHTML = "Грандіозний виграш!" : bigWinBoardText;
+        }
+
+        wonForSpin = 0;
+    }
+
+    if(payLinesIndex > 0) {
+        drawPlayedLines();
+    }
+
+    await sleep(3500);
 }
 
 let playSpin = () => {
@@ -620,24 +680,32 @@ let generateGame = () => {
         }
     }
     
-    if(bonusGameStarted == false) {
-        generateBonusGame();
-    }
-
     if(bonusGameStarted == true) {
         generateWilds();
     }
+
+    if(bonusGameStarted == false) {
+        generateBonusGame();
+    }
 }
 
-let playBonuseGame = () => {
-    //bonusGameSpins = 10;
-    bonusGameStartedTrigger = false;
+let playBonuseGame = async () => {
+    let bonusGame = document.querySelector("#bonusGameBoard");
+    let bonusGameEnded = document.querySelector("#bonusGameEnded");
+    let bonusGameEndedBoardValue = document.querySelector("#bonusGameEndedBoardValue");
+    let freespinsArea = document.querySelector("#freespinsArea");
+
+    bonusGame.style.visibility = "hidden";
+    freespinsArea.style.visibility = "visible";
     bonusGameWon = 0;
 
     for(let i = bonusGameSpins; i > 0; i--) {
-        generateGame();
-        //printGameArea();
-        calculateWon();
+        freespinsArea.innerHTML = 'Залишилося ' + (i-1) + ' з ' + bonusGameSpins + ' безкоштовних обертань';
+        
+        await playBonusSpin();
+
+        let bigWinBoard = document.querySelector('#bigWinBoard');
+        bigWinBoard.style.visibility = "hidden";
 
         if(bonusGameWon > bet * 5000) {
             bonusGameWon = bet * 5000;
@@ -646,12 +714,12 @@ let playBonuseGame = () => {
         }
     }
 
-    //console.log('You won ' + bonusGameWon + 'uah in ' + bonusGameSpins + ' spins');
-
-    //totalBonusesWon += bonusGameWon;
+    freespinsArea.style.visibility = "hidden";
+    bonusGameEndedBoardValue.innerHTML = 'Ви виграли ' + bonusGameWon + ' в ' + bonusGameSpins + ' безкоштовних обертаннях';
+    bonusGameEnded.style.visibility = "visible";
 
     bonusGameStarted = false;
-    bonusGameStartedTrigger = true;
+    isLocked = false;
     bonusGameWon = 0;
     wildMemoryItems = 0;
     wildMemory = [];
@@ -757,24 +825,11 @@ let calculateWon = () => {
         paySymbol == 13 ? symbolName = '3' : symbolName;
         paySymbol == 14 ? symbolName = '%' : symbolName;
 
-        if(counter >= 3 && symbolName != '%') {
-           //console.log('On ' + (line+1) + ' line symbol ' + symbolName + ' repeat ' + counter + ' times. You won: ' + lineWon + 'uah');
-        }
-
         totalWon += lineWon;
         wonForSpin = totalWon;
     }
 
-    // for(let i = 0; i < payLines.length; i++) {
-    //     console.log(payLines[i]);
-    // }
-
     bonusGameWon += totalWon;
-
-    // if(bonusGameStartedTrigger == true && bonusGameStarted == true) {
-    //     //playBonuseGame();
-    // }
-    console.log('You won ' + totalWon + 'uah for this spin');
 }
 
 updateGame();
