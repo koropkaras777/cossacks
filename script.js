@@ -244,6 +244,8 @@ let drawSpin = async () => {
         }
     }
 
+    let scattersChecked = 0;
+
     for(let i = 0; i < 5; i++) {
         let gameareaCol = document.getElementById('gameareaCol' + i);
         let positionTop = -170;
@@ -268,12 +270,22 @@ let drawSpin = async () => {
             payArray[i+j] == 11 ? point.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
             payArray[i+j] == 12 ? point.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
             payArray[i+j] == 13 ? point.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
-            payArray[i+j] == 14 ? point.style.backgroundImage = "url('images/Scatter.png')" : payArray[i];
+
+            if(payArray[i+j] == 14) {
+                scattersChecked++;
+                point.style.backgroundImage = "url('images/Scatter.png')";
+                point.style.border = '4px solid green';
+            }
 
             spinSound.play();
             gameareaCol.appendChild(point);
 
-            await sleep(150);
+            if(scattersChecked >= 2) {
+                await sleep(750);
+            } else {
+                await sleep(150);
+            }
+
         }
     }
     // for(let i = 0; i < 15; i++) {
