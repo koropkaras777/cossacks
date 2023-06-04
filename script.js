@@ -4,8 +4,8 @@ let payLines = [], payLinesIndex = 0;
 let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
 
 let isPlaying = false, isPlayingBonus = false;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Як козаки в футбол грали.mp3'), spinSound = new Audio('sound/spin.mp3');
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0;
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3');
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0;
 
 document.body.onkeyup = (e) => {
     if ((e.key == " " ||
@@ -39,6 +39,7 @@ let musicSelected = () => {
         slotMusic.volume = 1;
         bonusMusic.volume = 1;
         spinSound.volume = 1;
+        bonusMusicStart.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -47,6 +48,7 @@ let musicSelected = () => {
         slotMusic.volume = 0;
         bonusMusic.volume = 0;
         spinSound.volume = 0;
+        bonusMusicStart.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -249,6 +251,13 @@ let drawSpin = async () => {
     for(let i = 0; i < 5; i++) {
         let gameareaCol = document.getElementById('gameareaCol' + i);
         let positionTop = -170;
+        let timeOfDraw;
+
+        if(scattersChecked >= 2) {
+            timeOfDraw = 750;
+        } else {
+            timeOfDraw = 250;
+        }
 
         for(let j = 0; j < 11; j += 5) {
             let point = document.createElement('div');
@@ -280,12 +289,7 @@ let drawSpin = async () => {
             spinSound.play();
             gameareaCol.appendChild(point);
 
-            if(scattersChecked >= 2) {
-                await sleep(750);
-            } else {
-                await sleep(150);
-            }
-
+            await sleep(timeOfDraw);
         }
     }
     // for(let i = 0; i < 15; i++) {
@@ -395,7 +399,7 @@ let spin = async () => {
             // await sleep(500);
 
             slotMusic.pause();
-            bonusMusic.play();
+            bonusMusicStart.play();
 
             bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
             bonusArea.style.visibility = "visible";
@@ -604,7 +608,7 @@ let buildSymbol = (i, j, symbol) => {
     } else {
         let fortune = getRandomInt(chanceFortune);
 
-        if(gameArea[i][j-1] == 11 || gameArea[i][j-1] == 12 || gameArea[i][j-1] == 13) {
+        if(gameArea[i][j-1] == 11 && gameArea[i][j-1] == 12 && gameArea[i][j-1] == 13) {
             symbol = generateSymbol(symbol);
         } else {
             fortune == 1 ? symbol = gameArea[i][j-1] : symbol = generateSymbol(symbol);
@@ -732,6 +736,9 @@ let playBonuseGame = async () => {
     bonusGame.style.visibility = "hidden";
     freespinsArea.style.visibility = "visible";
     bonusGameWon = 0;
+
+    bonusMusicStart.pause();
+    bonusMusic.play();
 
     for(let i = bonusGameSpins; i > 0; i--) {
         freespinsArea.innerHTML = 'Залишилося ' + (i-1) + ' з ' + bonusGameSpins + ' безкоштовних обертань';
