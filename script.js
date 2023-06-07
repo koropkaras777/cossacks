@@ -2,9 +2,8 @@ let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStart
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
-
-let isPlaying = false, isPlayingBonus = false;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3');
+
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0;
 
 let payTable = [
@@ -218,38 +217,21 @@ let closeBonusBuy = () => {
     bonusBuyArea.style.visibility = 'hidden';
 }
 
-let outNum = (numEnd, numStart, element, isUp) => {
-    let e = document.querySelector(element);
-
-    let t = Math.round(time / (numEnd / step));
-    let interval = setInterval(() => {
-        if(isUp == true) {
-            numStart = numStart + step;
-
-            if (numStart == numEnd) {
-                clearInterval(interval);
-            }
-        }
-
-        if(isUp == false) {
-            numStart = numStart - step;
-            
-            if (numStart == numEnd) {
-                clearInterval(interval);
-            }
-        }
-
-        e.innerHTML = numStart;
-    }, t);
-}
-
 let betUp = () => {
     if(!bonusGameStarted) {
-        if(bet < 100) {
+        if(bet < 1000) {
             let betArea = document.querySelector('#bet');
             let betArea2 = document.querySelector('#bet2');
     
-            bet += 10;
+            if(bet < 100) {
+                bet += 10;
+            } else if(bet < 200) {
+                bet += 20;
+            } else if(bet < 500) {
+                bet += 25;
+            } else if(bet >= 500) {
+                bet += 50;
+            }
     
             betArea.innerHTML = bet;
             betArea2.innerHTML = bet;
@@ -265,7 +247,15 @@ let betDown = () => {
             let betArea = document.querySelector('#bet');
             let betArea2 = document.querySelector('#bet2');
 
-            bet -= 10;
+            if(bet <= 100) {
+                bet -= 10;
+            } else if(bet <= 200) {
+                bet -= 20;
+            } else if(bet <= 500) {
+                bet -= 25;
+            } else if(bet > 500) {
+                bet -= 50;
+            }
 
             betArea.innerHTML = bet;
             betArea2.innerHTML = bet;
@@ -281,7 +271,6 @@ let drawPlayedLines = async () => {
             let point = document.getElementById(payLines[i][j]);
 
             point.style.backgroundColor = "yellow";
-            point.style.border = "2px solid brown";
         }
 
         await sleep(750);
@@ -289,8 +278,7 @@ let drawPlayedLines = async () => {
         for(let j = 0; j < payLines[i].length; j++) {
             let point = document.getElementById(payLines[i][j]);
 
-            point.style.backgroundColor = "white";
-            point.style.border = "2px solid black";
+            point.style.backgroundColor = "white"; 
         }
     } 
 }
@@ -299,23 +287,19 @@ let drawSpin = async () => {
     let payArray = [], k = 0;
     
     for(let i = 0; i < 5; i++) {
-        let gameareaCol = document.getElementById('gameareaCol' + i);
-
         for(let j = 10; j >= 0; j -= 5) {
             try {
                 let point = document.getElementById(i+j);
                 
                 if(bonusGameStarted) {
                     if(point.style.backgroundImage != 'url("images/Wildx1.png")' && point.style.backgroundImage != 'url("images/Wildx2.png")' && point.style.backgroundImage != 'url("images/Wildx3.png")') {
-                        //gameareaCol.removeChild(point);
                         point.style.visibility = 'hidden';
                     }
                 } else {
-                    //gameareaCol.removeChild(point);
                     point.style.visibility = 'hidden';
                 }
                 
-                await sleep(75);
+                await sleep(50);
             } catch {
                 break;
             }
@@ -336,16 +320,13 @@ let drawSpin = async () => {
         let timeOfDraw;
 
         if(scattersChecked >= 2) {
-            timeOfDraw = 750;
+            timeOfDraw = 500;
         } else {
-            timeOfDraw = 250;
+            timeOfDraw = 125;
         }
 
         for(let j = 0; j < 11; j += 5) {
             let oldPoint = document.getElementById(i+j), point = document.createElement('div');
-
-            
-            //point.style.top = (positionTop + 170) + 'px';
 
             spinSound.play();
 
@@ -354,31 +335,13 @@ let drawSpin = async () => {
                 point.className = 'point';
                 point.style.position = 'relative';
                 point.style.top = (positionTop + 170) + 'px';
-
-                payArray[i+j] == 1 ? point.style.backgroundImage = "url('images/J.png')" : payArray[i];
-                payArray[i+j] == 2 ? point.style.backgroundImage = "url('images/Q.png')" : payArray[i];
-                payArray[i+j] == 3 ? point.style.backgroundImage = "url('images/K.png')" : payArray[i];
-                payArray[i+j] == 4 ? point.style.backgroundImage = "url('images/A.png')" : payArray[i];
-                payArray[i+j] == 5 ? point.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
-                payArray[i+j] == 6 ? point.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
-                payArray[i+j] == 7 ? point.style.backgroundImage = "url('images/House.png')" : payArray[i];
-                payArray[i+j] == 8 ? point.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
-                payArray[i+j] == 9 ? point.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
-                payArray[i+j] == 10 ? point.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
-                payArray[i+j] == 11 ? point.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
-                payArray[i+j] == 12 ? point.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
-                payArray[i+j] == 13 ? point.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
-
-                if(payArray[i+j] == 14) {
-                    scattersChecked++;
-                    point.style.backgroundImage = "url('images/Scatter.png')";
-                    point.style.border = '2px solid yellow';
-                }
+                point.style.backgroundImage = "url('images/Graj.png')";
 
                 gameareaCol.appendChild(point);
                 point.style.visibility = 'visible';
             } else {
                 oldPoint.style.backgroundColor = 'white';
+
                 payArray[i+j] == 1 ? oldPoint.style.backgroundImage = "url('images/J.png')" : payArray[i];
                 payArray[i+j] == 2 ? oldPoint.style.backgroundImage = "url('images/Q.png')" : payArray[i];
                 payArray[i+j] == 3 ? oldPoint.style.backgroundImage = "url('images/K.png')" : payArray[i];
@@ -397,6 +360,8 @@ let drawSpin = async () => {
                     scattersChecked++;
                     oldPoint.style.backgroundImage = "url('images/Scatter.png')";
                     oldPoint.style.border = '2px solid yellow';
+                } else if(payArray[i+j] >= 11 && payArray[i+j] <= 13) {
+                    oldPoint.style.border = '2px solid blue';
                 } else {
                     oldPoint.style.border = '2px solid black';
                 }
@@ -450,21 +415,18 @@ let spin = async () => {
     bigWinBoard.style.visibility = "hidden";
     
     if(balance >= bet) {
-        //outNum(balance-bet, balance, '#balance', false)
-
         balance -= bet;
         balanceArea.innerHTML = balance;
 
         checkBonusBuy();
         playSpin();
         await drawSpin();
-
         await sleep(500);
+
         let wonArea = document.querySelector('#won');
         wonArea.innerHTML = wonForSpin;
 
         if(wonForSpin > 0) {
-            // outNum(balance+wonForSpin, balance, '#balance', true)
             balance += wonForSpin;
             balanceArea.innerHTML = balance;
 
@@ -506,13 +468,12 @@ let playBonusSpin = async () => {
     let bigWinBoard = document.querySelector('#bigWinBoard');
     let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
     let bigWinBoardText = document.querySelector('#bigWinBoardText');
-    let balanceArea = document.getElementById('balance');
+    let wonArea = document.querySelector('#won');
     bigWinBoard.style.visibility = "hidden";
 
     playSpin();
     await drawSpin();
 
-    let wonArea = document.querySelector('#won');
     wonArea.innerHTML = bonusGameWon;
 
     if(wonForSpin > 0) {
@@ -533,7 +494,7 @@ let playBonusSpin = async () => {
         await drawPlayedLines();
     }
 
-    await sleep(2000);
+    await sleep(1000);
 }
 
 let playSpin = () => {
@@ -553,19 +514,16 @@ let generateSymbol = (symbol) => {
 
         reroll = 1 ? symbol : getRandomInt(4);
     }
-
     if(symbol == 8) {
         let reroll = getRandomInt(20);
 
         reroll = 1 ? symbol : getRandomInt(7);
     }
-
     if(symbol == 9) {
         let reroll = getRandomInt(25);
 
         reroll = 1 ? symbol : getRandomInt(7);
     }
-
     if(symbol == 10) {
         let reroll = getRandomInt(30);
 
@@ -586,8 +544,6 @@ let generateWilds = () => {
 
         if(gameArea[wildPositionI-1][wildPositionJ] < 11) {
             wildMemory[wildMemoryItems++] = [generatedWild, wildPositionI-1, wildPositionJ];
-        
-            //console.log('Generated wild ' + generatedWild + ' on position [' + (wildPositionI-1) + '; ' + wildPositionJ + ']');
         }
     }
 
@@ -824,53 +780,36 @@ let calculateWon = () => {
         
         multiplyDetected == 0 ? multiplyDetected = 1 : multiplyDetected;
 
-        let symbolName;
-
         if(paySymbol == 1) {
-            symbolName = 'J';
             lineWon = bet * payTable[0].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 2) {
-            symbolName = 'Q';
             lineWon = bet * payTable[1].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 3) {
-            symbolName = 'K';
             lineWon = bet * payTable[2].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 4) {
-            symbolName = 'A';
             lineWon = bet * payTable[3].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 5) {
-            symbolName = 'Ō';
             lineWon = bet * payTable[4].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 6) {
-            symbolName = 'Ū';
             lineWon = bet * payTable[5].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 7) {
-            symbolName = 'Ã';
             lineWon = bet * payTable[6].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 8) {
-            symbolName = '$';
             lineWon = bet * payTable[7].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 9) {
-            symbolName = '€';
             lineWon = bet * payTable[8].pay[counter-1] * multiplyDetected;
         }
         if(paySymbol == 10) {
-            symbolName = '£';
             lineWon = bet * payTable[9].pay[counter-1] * multiplyDetected;
         }
-
-        paySymbol == 11 ? symbolName = '1' : symbolName;
-        paySymbol == 12 ? symbolName = '2' : symbolName;
-        paySymbol == 13 ? symbolName = '3' : symbolName;
-        paySymbol == 14 ? symbolName = '%' : symbolName;
 
         totalWon += lineWon;
         wonForSpin = totalWon;
