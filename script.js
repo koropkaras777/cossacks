@@ -276,29 +276,23 @@ let betDown = () => {
 }
 
 let drawPlayedLines = async () => {
-    try {
-        for(let c = 0; c >= 0; c++) {
-            for(let i = 0; i < payLinesIndex; i++) {
-                for(let j = 0; j < payLines[i].length; j++) {
-                    let point = document.getElementById(payLines[i][j]);
-        
-                    point.style.backgroundColor = "yellow";
-                    point.style.border = "2px solid brown";
-                }
-        
-                await sleep(250);
-        
-                for(let j = 0; j < payLines[i].length; j++) {
-                    let point = document.getElementById(payLines[i][j]);
-        
-                    point.style.backgroundColor = "white";
-                    point.style.border = "2px solid black";
-                }
-            } 
+    for(let i = 0; i < payLinesIndex; i++) {
+        for(let j = 0; j < payLines[i].length; j++) {
+            let point = document.getElementById(payLines[i][j]);
+
+            point.style.backgroundColor = "yellow";
+            point.style.border = "2px solid brown";
         }
-    } catch {
-        console.log('Skip');
-    }   
+
+        await sleep(750);
+
+        for(let j = 0; j < payLines[i].length; j++) {
+            let point = document.getElementById(payLines[i][j]);
+
+            point.style.backgroundColor = "white";
+            point.style.border = "2px solid black";
+        }
+    } 
 }
 
 let drawSpin = async () => {
@@ -385,7 +379,6 @@ let drawSpin = async () => {
                 point.style.visibility = 'visible';
             } else {
                 oldPoint.style.backgroundColor = 'white';
-                
                 payArray[i+j] == 1 ? oldPoint.style.backgroundImage = "url('images/J.png')" : payArray[i];
                 payArray[i+j] == 2 ? oldPoint.style.backgroundImage = "url('images/Q.png')" : payArray[i];
                 payArray[i+j] == 3 ? oldPoint.style.backgroundImage = "url('images/K.png')" : payArray[i];
@@ -489,7 +482,7 @@ let spin = async () => {
         }
 
         if(payLinesIndex > 0) {
-            drawPlayedLines();
+            await drawPlayedLines();
         }
 
         if(bonusGameStarted == true) {
@@ -519,7 +512,6 @@ let playBonusSpin = async () => {
     playSpin();
     await drawSpin();
 
-    // await sleep(500);
     let wonArea = document.querySelector('#won');
     wonArea.innerHTML = bonusGameWon;
 
@@ -538,7 +530,7 @@ let playBonusSpin = async () => {
     }
 
     if(payLinesIndex > 0) {
-        drawPlayedLines();
+        await drawPlayedLines();
     }
 
     await sleep(2000);
