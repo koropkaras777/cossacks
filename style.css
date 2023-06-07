@@ -34,6 +34,7 @@ body {
 .gamearea-col {
     width: 160px;
     height: 516px;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;

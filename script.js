@@ -1,4 +1,4 @@
-let bet = 50, balance = 13000, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
@@ -6,6 +6,85 @@ let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins
 let isPlaying = false, isPlayingBonus = false;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3');
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0;
+
+let payTable = [
+    { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
+    { symbol: 2, pay: [0, 0, 0.2, 0.5, 1.5] },
+    { symbol: 3, pay: [0, 0, 0.2, 0.5, 1.5] },
+    { symbol: 4, pay: [0, 0, 0.2, 0.5, 1.5] },
+    { symbol: 5, pay: [0, 0, 0.5, 1.5, 5] },
+    { symbol: 6, pay: [0, 0, 0.5, 2, 5.5] },
+    { symbol: 7, pay: [0, 0, 0.5, 2.5, 6] },
+    { symbol: 8, pay: [0, 0, 2, 5, 50] },
+    { symbol: 9, pay: [0, 0, 2, 5.5, 55] },
+    { symbol: 10, pay: [0, 0, 2, 6, 60] },
+]
+
+let lines = [
+    // 0  1  2  3  4
+    // 5  6  7  8  9
+    // 10 11 12 13 14
+    { line: 1, array: [        
+        0, 1, 2, 3, 4          
+    ] },                  
+    { line: 2, array: [ 
+        5, 6, 7, 8, 9
+    ] },
+    { line: 3, array: [ 
+        10, 11, 12, 13, 14
+    ] },
+    { line: 4, array: [ 
+        0, 6, 12, 8, 4
+    ] },
+    { line: 5, array: [ 
+        10, 6, 2, 8, 14
+    ] },
+    { line: 6, array: [ 
+        0, 6, 7, 8, 4
+    ] },
+    { line: 7, array: [ 
+        10, 6, 7, 8, 14
+    ] },
+    { line: 8, array: [ 
+        0, 6, 2, 8, 4
+    ] },
+    { line: 9, array: [ 
+        5, 1, 7, 3, 9
+    ] },
+    { line: 10, array: [ 
+        10, 6, 12, 8, 14
+    ] },
+    { line: 11, array: [ 
+        5, 11, 7, 13, 9
+    ] },
+    { line: 12, array: [ 
+        0, 11, 12, 13, 4
+    ] },
+    { line: 13, array: [ 
+        10, 1, 2, 3, 14
+    ] },
+    { line: 14, array: [ 
+        5, 1, 2, 3, 9
+    ] },
+    { line: 15, array: [ 
+        5, 11, 12, 13, 9
+    ] },
+    { line: 16, array: [ 
+        5, 1, 7, 13, 9
+    ] },
+    { line: 17, array: [ 
+        5, 11, 7, 3, 9
+    ] },
+    { line: 18, array: [ 
+        10, 11, 2, 13, 14
+    ] },
+    { line: 19, array: [ 
+        10, 11, 7, 3, 4
+    ] },
+    { line: 20, array: [ 
+        0, 1, 7, 13, 14
+    ] },
+]
 
 document.body.onkeyup = (e) => {
     if ((e.key == " " ||
@@ -231,8 +310,17 @@ let drawSpin = async () => {
         for(let j = 10; j >= 0; j -= 5) {
             try {
                 let point = document.getElementById(i+j);
-                gameareaCol.removeChild(point);
-
+                
+                if(bonusGameStarted) {
+                    if(point.style.backgroundImage != 'url("images/Wildx1.png")' && point.style.backgroundImage != 'url("images/Wildx2.png")' && point.style.backgroundImage != 'url("images/Wildx3.png")') {
+                        //gameareaCol.removeChild(point);
+                        point.style.visibility = 'hidden';
+                    }
+                } else {
+                    //gameareaCol.removeChild(point);
+                    point.style.visibility = 'hidden';
+                }
+                
                 await sleep(75);
             } catch {
                 break;
@@ -260,60 +348,72 @@ let drawSpin = async () => {
         }
 
         for(let j = 0; j < 11; j += 5) {
-            let point = document.createElement('div');
-            point.className = 'point';
-            point.id = i + j;
-            point.style.position = 'relative';
-            point.style.top = (positionTop + 170) + 'px';
+            let oldPoint = document.getElementById(i+j), point = document.createElement('div');
 
-            payArray[i+j] == 1 ? point.style.backgroundImage = "url('images/J.png')" : payArray[i];
-            payArray[i+j] == 2 ? point.style.backgroundImage = "url('images/Q.png')" : payArray[i];
-            payArray[i+j] == 3 ? point.style.backgroundImage = "url('images/K.png')" : payArray[i];
-            payArray[i+j] == 4 ? point.style.backgroundImage = "url('images/A.png')" : payArray[i];
-            payArray[i+j] == 5 ? point.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
-            payArray[i+j] == 6 ? point.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
-            payArray[i+j] == 7 ? point.style.backgroundImage = "url('images/House.png')" : payArray[i];
-            payArray[i+j] == 8 ? point.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
-            payArray[i+j] == 9 ? point.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
-            payArray[i+j] == 10 ? point.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
-            payArray[i+j] == 11 ? point.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
-            payArray[i+j] == 12 ? point.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
-            payArray[i+j] == 13 ? point.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
-
-            if(payArray[i+j] == 14) {
-                scattersChecked++;
-                point.style.backgroundImage = "url('images/Scatter.png')";
-                point.style.border = '4px solid green';
-            }
+            
+            //point.style.top = (positionTop + 170) + 'px';
 
             spinSound.play();
-            gameareaCol.appendChild(point);
+
+            if(!oldPoint) {
+                point.id = i + j;
+                point.className = 'point';
+                point.style.position = 'relative';
+                point.style.top = (positionTop + 170) + 'px';
+
+                payArray[i+j] == 1 ? point.style.backgroundImage = "url('images/J.png')" : payArray[i];
+                payArray[i+j] == 2 ? point.style.backgroundImage = "url('images/Q.png')" : payArray[i];
+                payArray[i+j] == 3 ? point.style.backgroundImage = "url('images/K.png')" : payArray[i];
+                payArray[i+j] == 4 ? point.style.backgroundImage = "url('images/A.png')" : payArray[i];
+                payArray[i+j] == 5 ? point.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
+                payArray[i+j] == 6 ? point.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
+                payArray[i+j] == 7 ? point.style.backgroundImage = "url('images/House.png')" : payArray[i];
+                payArray[i+j] == 8 ? point.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
+                payArray[i+j] == 9 ? point.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
+                payArray[i+j] == 10 ? point.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
+                payArray[i+j] == 11 ? point.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
+                payArray[i+j] == 12 ? point.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
+                payArray[i+j] == 13 ? point.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
+
+                if(payArray[i+j] == 14) {
+                    scattersChecked++;
+                    point.style.backgroundImage = "url('images/Scatter.png')";
+                    point.style.border = '2px solid yellow';
+                }
+
+                gameareaCol.appendChild(point);
+                point.style.visibility = 'visible';
+            } else {
+                oldPoint.style.backgroundColor = 'white';
+                
+                payArray[i+j] == 1 ? oldPoint.style.backgroundImage = "url('images/J.png')" : payArray[i];
+                payArray[i+j] == 2 ? oldPoint.style.backgroundImage = "url('images/Q.png')" : payArray[i];
+                payArray[i+j] == 3 ? oldPoint.style.backgroundImage = "url('images/K.png')" : payArray[i];
+                payArray[i+j] == 4 ? oldPoint.style.backgroundImage = "url('images/A.png')" : payArray[i];
+                payArray[i+j] == 5 ? oldPoint.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
+                payArray[i+j] == 6 ? oldPoint.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
+                payArray[i+j] == 7 ? oldPoint.style.backgroundImage = "url('images/House.png')" : payArray[i];
+                payArray[i+j] == 8 ? oldPoint.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
+                payArray[i+j] == 9 ? oldPoint.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
+                payArray[i+j] == 10 ? oldPoint.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
+                payArray[i+j] == 11 ? oldPoint.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
+                payArray[i+j] == 12 ? oldPoint.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
+                payArray[i+j] == 13 ? oldPoint.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
+
+                if(payArray[i+j] == 14) {
+                    scattersChecked++;
+                    oldPoint.style.backgroundImage = "url('images/Scatter.png')";
+                    oldPoint.style.border = '2px solid yellow';
+                } else {
+                    oldPoint.style.border = '2px solid black';
+                }
+
+                oldPoint.style.visibility = 'visible';
+            }
 
             await sleep(timeOfDraw);
         }
     }
-    // for(let i = 0; i < 15; i++) {
-    //     let point = document.createElement('div');
-    //     point.className = 'point';
-    //     point.id = i;
-
-    //     payArray[i] == 1 ? point.style.backgroundImage = "url('images/J.png')" : payArray[i];
-    //     payArray[i] == 2 ? point.style.backgroundImage = "url('images/Q.png')" : payArray[i];
-    //     payArray[i] == 3 ? point.style.backgroundImage = "url('images/K.png')" : payArray[i];
-    //     payArray[i] == 4 ? point.style.backgroundImage = "url('images/A.png')" : payArray[i];
-    //     payArray[i] == 5 ? point.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
-    //     payArray[i] == 6 ? point.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
-    //     payArray[i] == 7 ? point.style.backgroundImage = "url('images/House.png')" : payArray[i];
-    //     payArray[i] == 8 ? point.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
-    //     payArray[i] == 9 ? point.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
-    //     payArray[i] == 10 ? point.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
-    //     payArray[i] == 11 ? point.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
-    //     payArray[i] == 12 ? point.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
-    //     payArray[i] == 13 ? point.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
-    //     payArray[i] == 14 ? point.style.backgroundImage = "url('images/Scatter.png')" : payArray[i];
-        
-    //     area.appendChild(point);
-    // }
 }
 
 let spinWithSpinButton = () => {
@@ -396,8 +496,6 @@ let spin = async () => {
             let bonusArea = document.querySelector('#bonusGameBoard');
             let bonusGameBoardValue = document.querySelector('#bonusGameBoardValue');
 
-            // await sleep(500);
-
             slotMusic.pause();
             bonusMusicStart.play();
 
@@ -451,85 +549,6 @@ let playSpin = () => {
     calculateWon();
 }
 
-let payTable = [
-    { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
-    { symbol: 2, pay: [0, 0, 0.2, 0.5, 1.5] },
-    { symbol: 3, pay: [0, 0, 0.2, 0.5, 1.5] },
-    { symbol: 4, pay: [0, 0, 0.2, 0.5, 1.5] },
-    { symbol: 5, pay: [0, 0, 0.5, 1.5, 5] },
-    { symbol: 6, pay: [0, 0, 0.5, 2, 5.5] },
-    { symbol: 7, pay: [0, 0, 0.5, 2.5, 6] },
-    { symbol: 8, pay: [0, 0, 2, 5, 50] },
-    { symbol: 9, pay: [0, 0, 2, 5.5, 55] },
-    { symbol: 10, pay: [0, 0, 2, 6, 60] },
-]
-
-let lines = [
-    // 0  1  2  3  4
-    // 5  6  7  8  9
-    // 10 11 12 13 14
-    { line: 1, array: [        
-        0, 1, 2, 3, 4          
-    ] },                  
-    { line: 2, array: [ 
-        5, 6, 7, 8, 9
-    ] },
-    { line: 3, array: [ 
-        10, 11, 12, 13, 14
-    ] },
-    { line: 4, array: [ 
-        0, 6, 12, 8, 4
-    ] },
-    { line: 5, array: [ 
-        10, 6, 2, 8, 14
-    ] },
-    { line: 6, array: [ 
-        0, 6, 7, 8, 4
-    ] },
-    { line: 7, array: [ 
-        10, 6, 7, 8, 14
-    ] },
-    { line: 8, array: [ 
-        0, 6, 2, 8, 4
-    ] },
-    { line: 9, array: [ 
-        5, 1, 7, 3, 9
-    ] },
-    { line: 10, array: [ 
-        10, 6, 12, 8, 14
-    ] },
-    { line: 11, array: [ 
-        5, 11, 7, 13, 9
-    ] },
-    { line: 12, array: [ 
-        0, 11, 12, 13, 4
-    ] },
-    { line: 13, array: [ 
-        10, 1, 2, 3, 14
-    ] },
-    { line: 14, array: [ 
-        5, 1, 2, 3, 9
-    ] },
-    { line: 15, array: [ 
-        5, 11, 12, 13, 9
-    ] },
-    { line: 16, array: [ 
-        5, 1, 7, 13, 9
-    ] },
-    { line: 17, array: [ 
-        5, 11, 7, 3, 9
-    ] },
-    { line: 18, array: [ 
-        10, 11, 2, 13, 14
-    ] },
-    { line: 19, array: [ 
-        10, 11, 7, 3, 4
-    ] },
-    { line: 20, array: [ 
-        0, 1, 7, 13, 14
-    ] },
-]
-
 let getRandomInt = (max) => {
     return Math.floor(Math.random() * max) + 1;
 }
@@ -569,13 +588,9 @@ let generateWilds = () => {
 
     if(chance >= 1 && chance <= 695) {
         let generatedWild, wild = getRandomInt(3);
+        let wildPositionI = getRandomInt(3), wildPositionJ = getRandomInt(3);
 
-        let wildPositionI = getRandomInt(3);
-        let wildPositionJ = getRandomInt(3);
-
-        wild == 1 ? generatedWild = 11 : generatedWild;
-        wild == 2 ? generatedWild = 12 : generatedWild;
-        wild == 3 ? generatedWild = 13 : generatedWild;
+        generatedWild = wild + 10;
 
         if(gameArea[wildPositionI-1][wildPositionJ] < 11) {
             wildMemory[wildMemoryItems++] = [generatedWild, wildPositionI-1, wildPositionJ];
@@ -608,7 +623,7 @@ let buildSymbol = (i, j, symbol) => {
     } else {
         let fortune = getRandomInt(chanceFortune);
 
-        if(gameArea[i][j-1] == 11 && gameArea[i][j-1] == 12 && gameArea[i][j-1] == 13) {
+        if(gameArea[i][j-1] == 11 || gameArea[i][j-1] == 12 || gameArea[i][j-1] == 13) {
             symbol = generateSymbol(symbol);
         } else {
             fortune == 1 ? symbol = gameArea[i][j-1] : symbol = generateSymbol(symbol);
