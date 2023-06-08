@@ -135,6 +135,33 @@ let musicSelected = () => {
 }
 
 let openInfo = () => {
+    try {
+        for(let i = 1; i <= 10; i++) {
+            let payId = 'pay' + i;
+            let paySymbol = document.getElementById(payId);
+    
+            for(let j = 5; j >= 3; j--) {
+                let paySymbolId = 'symbolInfo' + j;
+                let paySymbolInformation = document.getElementById(paySymbolId);
+                paySymbol.removeChild(paySymbolInformation);
+            }
+        }
+    } catch {
+
+    }
+
+    for(let i = 1; i <= 10; i++) {
+        let payId = 'pay' + i;
+        let paySymbol = document.getElementById(payId);
+
+        for(let j = 5; j >= 3; j--) {
+            let paySymbolInformation = document.createElement('b');
+
+            paySymbolInformation.id = 'symbolInfo' + j;
+            paySymbolInformation.innerHTML = j + ' - ' + (bet * payTable[i-1].pay[j-1]);
+            paySymbol.appendChild(paySymbolInformation);
+        }
+    }
     let informationBoard = document.querySelector('#informationBoard');
     informationBoard.style.visibility = 'visible';
 }
@@ -235,10 +262,8 @@ let betUp = () => {
     
             if(bet < 100) {
                 bet += 10;
-            } else if(bet < 200) {
-                bet += 20;
             } else if(bet < 500) {
-                bet += 25;
+                bet += 20;
             } else if(bet >= 500) {
                 bet += 50;
             }
@@ -259,10 +284,8 @@ let betDown = () => {
 
             if(bet <= 100) {
                 bet -= 10;
-            } else if(bet <= 200) {
-                bet -= 20;
             } else if(bet <= 500) {
-                bet -= 25;
+                bet -= 20;
             } else if(bet > 500) {
                 bet -= 50;
             }
