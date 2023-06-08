@@ -20,9 +20,6 @@ let payTable = [
 ]
 
 let lines = [
-    // 0  1  2  3  4
-    // 5  6  7  8  9
-    // 10 11 12 13 14
     { line: 1, array: [        
         0, 1, 2, 3, 4          
     ] },                  
@@ -74,6 +71,9 @@ let lines = [
     { line: 17, array: [ 
         5, 11, 7, 3, 9
     ] },
+    // 0  1  2  3  4
+    // 5  6  7  8  9
+    // 10 11 12 13 14
     { line: 18, array: [ 
         10, 11, 2, 13, 14
     ] },
@@ -133,6 +133,16 @@ let musicSelected = () => {
         isMusic = true;
     }
 }
+
+let openInfo = () => {
+    let informationBoard = document.querySelector('#informationBoard');
+    informationBoard.style.visibility = 'visible';
+}
+
+let closeInformation = () => {
+    let informationBoard = document.querySelector('#informationBoard');
+    informationBoard.style.visibility = 'hidden';
+} 
 
 let buy = (numOfSpins) => {
     if(numOfSpins == 10 && balance >= bet * 100) {
