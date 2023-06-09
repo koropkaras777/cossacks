@@ -316,7 +316,8 @@ h3 {
     border: 2px solid black;
 }
 
-.bigWinBoard {
+/* ****************************************************************************************************** */
+.bigWinBoard { 
     width: 100%;
     height: 100%;
     position: absolute;
@@ -328,57 +329,33 @@ h3 {
     justify-content: center;
     visibility: hidden;
 }
+.bigWinBoard-block {
+    width: 80%;
+    height: 600px;
+    background: linear-gradient(149deg, rgba(24,187,156,1) 0%, rgba(106,57,175,1) 42%, rgba(187,24,148,1) 72%, rgba(115,53,134,1) 100%);
+    animation: gradient 10s infinite linear; 
+    background-size: 500%;
+    border-radius: 25px;
+    border: 4px solid rgb(255, 221, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: scale(.95);
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 2;
+}
 .bigWinBoard-text {
     font-size: 64px;
     font-weight: bold;
     color: yellow;
     -webkit-text-stroke: 2px brown;
-    z-index: 1;
 }
-.bigWinBoard-area {
-    width: 200px;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 100px;
-}
-.bigWinBoard-startButton {
-    width: 400px;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 60px;
-    font-weight: bold;
-    color: rgb(179, 181, 255) ;
-    -webkit-text-stroke: 2px rgb(59, 0, 235);
-    z-index: 1;
-    padding: 15px;
-    border: 3px solid rgb(99, 99, 255);
-    border-radius: 4%;
-    background-color: rgb(255, 255, 255);
-    opacity: 0.8;
-}
-.bigWinBoard-startButton:hover {
-    cursor: pointer;
-    opacity: 1;
-}
-.bigWinBoard-startButton:active {
-    width: 380px;
-    height: 45px;
-    font-size: 56px;
-    opacity: 1;
-}
-
 .bigWinBoard-value {
     font-size: 92px;
     font-weight: bold;
-    color: rgb(140, 250, 144);
-    -webkit-text-stroke: 2px rgb(0, 110, 11);
-    z-index: 1;
+    color: yellow;
+    -webkit-text-stroke: 2px brown;
 }
 .bigWinBoard-background {
     position: absolute;
@@ -386,11 +363,31 @@ h3 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(222, 255, 184);
-    opacity: 0.8;
+    background-color: rgba(0, 0, 0, 0.678);
+    z-index: 1;
 }
-
-
+@keyframes pulse {
+    from {
+        transform: scale(.95);
+    }
+    50% {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(.95);
+    }
+}
+@keyframes gradient {
+    0% {
+        background-position: 80% 0%;
+    }
+    50% {
+        background-position: 20% 100%;
+    }
+    100% {
+        background-position: 80% 0%;
+    }
+}
 
 .bonusGame, .bonusGameEnded {
     position: absolute;
@@ -404,13 +401,32 @@ h3 {
     justify-content: center;
     visibility: hidden;
 }
+.bonusGame-block {
+    width: 80%;
+    height: 600px;
+    background: linear-gradient(149deg, rgba(24,187,156,1) 0%, rgba(106,57,175,1) 42%, rgba(187,24,148,1) 72%, rgba(115,53,134,1) 100%);
+    animation: gradient 10s infinite linear; 
+    background-size: 500%;
+    border-radius: 25px;
+    border: 4px solid rgb(255, 221, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: scale(.95);
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 2;
+}
+.bonusGame-block h2 {
+    margin-top: 60px;
+}
 .bonusGame-background, .bonusGameEnded-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(190, 184, 255);
+    background-color: rgba(0, 0, 0, 0.678);
     opacity: 0.8;
 }
 .bonusGame-text, .bonusGameEnded-text {
@@ -424,65 +440,17 @@ h3 {
     font-size: 64px;
     font-weight: bold;
     text-align: center;
-    color: rgb(140, 250, 144);
-    -webkit-text-stroke: 2px rgb(0, 110, 11);
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke: 2px rgb(0, 0, 0);
     z-index: 1;
 }
 .bonusGameEnded-value {
     font-size: 36px;
     font-weight: bold;
-    color: rgb(140, 250, 144);
-    -webkit-text-stroke: 2px rgb(0, 110, 11);
+    text-align: center;
+    color: yellow;
+    -webkit-text-stroke: 1px brown;
     z-index: 1;
-}
-.bonusGame-startButton-area, .bonusGameEnded-startButton-area {
-    width: 200px;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 100px;
-}
-.bonusGameEnded-startButton-area {
-    width: 400px;
-}
-.bonusGame-startButton, .bonusGameEnded-startButton {
-    width: 400px;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 64px;
-    font-weight: bold;
-    color: rgb(179, 181, 255) ;
-    -webkit-text-stroke: 2px rgb(59, 0, 235);
-    z-index: 1;
-    padding: 15px;
-    border: 3px solid rgb(99, 99, 255);
-    border-radius: 5%;
-    background-color: rgb(255, 255, 255);
-    opacity: 0.8;
-}
-.bonusGameEnded-startButton {
-    width: 400px;
-}
-.bonusGame-startButton:hover, .bonusGameEnded-startButton:hover {
-    cursor: pointer;
-    opacity: 1;
-}
-.bonusGame-startButton:active {
-    width: 190px;
-    height: 45px;
-    font-size: 60px;
-    opacity: 1;
-}
-.bonusGameEnded-startButton:active {
-    width: 370px;
-    height: 45px;
-    font-size: 60px;
-    opacity: 1;
 }
 
 #betSizeBonusBuy {

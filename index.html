@@ -54,24 +54,24 @@
                     <div class="bonusBuy-button" onclick="bonusBuy()" id="bonusBuyButton"></div>
                 </div>
                 <div class="middleBoxButton">
-                    <div class="info-button" onclick="openInfo()" id="openInfoButton"></div>
+                    <div class="info-button" onclick="openInformation()" id="openInfoButton"></div>
                 </div>
             </div>
         </div>
         <div class="bigWinBoard" id="bigWinBoard">
             <div class="bigWinBoard-background"></div>
-            <div class="bigWinBoard-text" id="bigWinBoardText">Великий виграш!</div>
-            <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
-            <div class="bigWinBoard-area">
-                <div class="bigWinBoard-startButton" id="bigWinBoardGameStartButton" onclick="continueGame()">Продовжити</div>
+            <div class="bigWinBoard-block">
+                <div class="bigWinBoard-text" id="bigWinBoardText">Великий виграш!</div>
+                <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
             </div>
+            
         </div>
-        <div class="bonusGame" id="bonusGameBoard">
+        <div class="bonusGame" id="bonusGameBoard" onclick="playBonuseGame()">
             <div class="bonusGame-background"></div>
-            <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
-            <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
-            <div class="bonusGame-startButton-area">
-                <div class="bonusGame-startButton" id="bonusGameStartButton" onclick="playBonuseGame()">Старт</div>
+            <div class="bonusGame-block">
+                <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
+                <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
+                <h2>Натисніть будь-де, щоб розпочати безкоштовні обертання</h2>
             </div>
         </div>
         <div class="bonusBuy" id="bonusBuy">
@@ -113,13 +113,13 @@
             </div>
             <div class="bonusBuy-background"></div>
         </div>
-        <div class="bonusGameEnded" id="bonusGameEnded">
+        <div class="bonusGameEnded" id="bonusGameEnded" onclick="continueStandartGame()">
             <div class="bonusGameEnded-background"></div>
-            <div class="bonusGameEnded-text">Вітаємо!</div>
-            <div class="bonusGameEnded-value" id="bonusGameEndedBoardValue">Ви виграли 10000 в 10 безкоштовних обертаннях</div>
-            <div class="bonusGameEnded-startButton-area">
-                <div class="bonusGameEnded-startButton" id="bonusGameContinueButton" onclick="continueStandartGame()">Продовжити</div>
-            </div>
+            <div class="bonusGame-block">
+                <div class="bonusGameEnded-text">Вітаємо!</div>
+                <div class="bonusGameEnded-value" id="bonusGameEndedBoardValue">Ви виграли 10000 в 10 безкоштовних обертаннях</div>
+                <h2>Натисніть будь-де, щоб продовжити</h2>
+            </div> 
         </div>
         <div class="freespins-area" id="freespinsArea">Залишилося 9 з 10 безкоштовних обертань</div>
         <div class="informationBlock" id="informationBoard">
@@ -304,7 +304,7 @@
                     <div class="closeButtonInformation" onclick="closeInformation()"></div>
                 </div>
             </div>
-            <div class="payTableBackground"></div>
+            <div class="payTableBackground" onclick="closeInformation()"></div>
         </div>
         <script src="script.js"></script>
     </body>

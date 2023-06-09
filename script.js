@@ -1,10 +1,10 @@
 let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let time = 50, step = 1, isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3');
+let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3');
 
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0;
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0;
 
 let payTable = [
     { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
@@ -97,6 +97,23 @@ let sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let outputNumber = (number, elementId) => {
+    let e = document.getElementById(elementId), startValue = 0, time = 8000, step = Math.round(number / 300);
+
+    let t = Math.round(time / (number / step));
+
+    let interval = setInterval(() => {
+        startValue = startValue + step;
+
+        e.innerHTML = startValue;
+
+        if (startValue >= number) {
+            e.innerHTML = number;
+            clearInterval(interval);
+        }
+    }, t);
+}
+
 let updateGame = () => {
     drawSpin();
     checkBonusBuy();
@@ -118,6 +135,8 @@ let musicSelected = () => {
         bonusMusic.volume = 1;
         spinSound.volume = 1;
         bonusMusicStart.volume = 1;
+        bigWinSound.volume = 1;
+        bigWinSoundStart.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -127,6 +146,8 @@ let musicSelected = () => {
         bonusMusic.volume = 0;
         spinSound.volume = 0;
         bonusMusicStart.volume = 0;
+        bigWinSound.volume = 0;
+        bigWinSoundStart.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -134,7 +155,7 @@ let musicSelected = () => {
     }
 }
 
-let openInfo = () => {
+let openInformation = () => {
     try {
         for(let i = 1; i <= 10; i++) {
             let payId = 'pay' + i;
@@ -375,19 +396,19 @@ let drawSpin = async () => {
             } else {
                 oldPoint.style.backgroundColor = 'white';
 
-                payArray[i+j] == 1 ? oldPoint.style.backgroundImage = "url('images/J.png')" : payArray[i];
-                payArray[i+j] == 2 ? oldPoint.style.backgroundImage = "url('images/Q.png')" : payArray[i];
-                payArray[i+j] == 3 ? oldPoint.style.backgroundImage = "url('images/K.png')" : payArray[i];
-                payArray[i+j] == 4 ? oldPoint.style.backgroundImage = "url('images/A.png')" : payArray[i];
-                payArray[i+j] == 5 ? oldPoint.style.backgroundImage = "url('images/Trophy.png')" : payArray[i];
-                payArray[i+j] == 6 ? oldPoint.style.backgroundImage = "url('images/Oil.png')" : payArray[i];
-                payArray[i+j] == 7 ? oldPoint.style.backgroundImage = "url('images/House.png')" : payArray[i];
-                payArray[i+j] == 8 ? oldPoint.style.backgroundImage = "url('images/Oko.png')" : payArray[i];
-                payArray[i+j] == 9 ? oldPoint.style.backgroundImage = "url('images/Tur.png')" : payArray[i];
-                payArray[i+j] == 10 ? oldPoint.style.backgroundImage = "url('images/Graj.png')" : payArray[i];
-                payArray[i+j] == 11 ? oldPoint.style.backgroundImage = "url('images/Wildx1.png')" : payArray[i];
-                payArray[i+j] == 12 ? oldPoint.style.backgroundImage = "url('images/Wildx2.png')" : payArray[i];
-                payArray[i+j] == 13 ? oldPoint.style.backgroundImage = "url('images/Wildx3.png')" : payArray[i];
+                if(payArray[i+j] == 1) { oldPoint.style.backgroundImage = "url('images/J.png')" };
+                if(payArray[i+j] == 2) { oldPoint.style.backgroundImage = "url('images/Q.png')" };
+                if(payArray[i+j] == 3) { oldPoint.style.backgroundImage = "url('images/K.png')" };
+                if(payArray[i+j] == 4) { oldPoint.style.backgroundImage = "url('images/A.png')" };
+                if(payArray[i+j] == 5) { oldPoint.style.backgroundImage = "url('images/Trophy.png')" };
+                if(payArray[i+j] == 6) { oldPoint.style.backgroundImage = "url('images/Oil.png')" };
+                if(payArray[i+j] == 7) { oldPoint.style.backgroundImage = "url('images/House.png')" };
+                if(payArray[i+j] == 8) { oldPoint.style.backgroundImage = "url('images/Oko.png')" };
+                if(payArray[i+j] == 9) { oldPoint.style.backgroundImage = "url('images/Tur.png')" };
+                if(payArray[i+j] == 10) { oldPoint.style.backgroundImage = "url('images/Graj.png')" };
+                if(payArray[i+j] == 11) { oldPoint.style.backgroundImage = "url('images/Wildx1.png')" };
+                if(payArray[i+j] == 12) { oldPoint.style.backgroundImage = "url('images/Wildx2.png')" };
+                if(payArray[i+j] == 13) { oldPoint.style.backgroundImage = "url('images/Wildx3.png')" };
 
                 if(payArray[i+j] == 14) {
                     scattersChecked++;
@@ -457,22 +478,32 @@ let spin = async () => {
         await sleep(500);
 
         let wonArea = document.querySelector('#won');
-        wonArea.innerHTML = wonForSpin;
 
         if(wonForSpin > 0) {
-            balance += wonForSpin;
-            balanceArea.innerHTML = balance;
-
             if(wonForSpin/bet >= 30) {
+                slotMusic.pause();
+                bigWinSoundStart.play();
+                await sleep(2000);
+
+                bigWinSound.play();
                 bigWinBoardValue.innerHTML = wonForSpin;
                 bigWinBoard.style.visibility = "visible";
 
-                wonForSpin/bet >= 30 && wonForSpin/bet < 50 ? bigWinBoardText.innerHTML = "Великий виграш!" : bigWinBoardText;
-                wonForSpin/bet >= 50 && wonForSpin/bet < 100 ? bigWinBoardText.innerHTML = "Супер виграш!" : bigWinBoardText;
-                wonForSpin/bet >= 100 && wonForSpin/bet < 200 ? bigWinBoardText.innerHTML = "Мега виграш!" : bigWinBoardText;
-                wonForSpin/bet >= 200 ? bigWinBoardText.innerHTML = "Грандіозний виграш!" : bigWinBoardText;
+                if(wonForSpin/bet >= 30 && wonForSpin/bet < 50) { bigWinBoardText.innerHTML = "Великий виграш!"; }
+                if(wonForSpin/bet >= 50 && wonForSpin/bet < 100) { bigWinBoardText.innerHTML = "Супер великий виграш!"; }
+                if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
+                if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
+
+                outputNumber(wonForSpin, 'bigWinBoardValue');
+                await sleep(10000);
+
+                bigWinBoard.style.visibility = "hidden";
+                slotMusic.play();
             }
 
+            balance += wonForSpin;
+            wonArea.innerHTML = wonForSpin;
+            balanceArea.innerHTML = balance;
             wonForSpin = 0;
         }
 
@@ -507,21 +538,32 @@ let playBonusSpin = async () => {
     playSpin();
     await drawSpin();
 
-    wonArea.innerHTML = bonusGameWon;
-
     if(wonForSpin > 0) {
         if(wonForSpin/bet >= 30) {
+            bonusMusic.pause();
+            bigWinSoundStart.play();
+            await sleep(2000);
+
+            bigWinSound.play();
             bigWinBoardValue.innerHTML = wonForSpin;
             bigWinBoard.style.visibility = "visible";
 
-            wonForSpin/bet >= 30 && wonForSpin/bet < 50 ? bigWinBoardText.innerHTML = "Великий виграш!" : bigWinBoardText;
-            wonForSpin/bet >= 50 && wonForSpin/bet < 100 ? bigWinBoardText.innerHTML = "Супер виграш!" : bigWinBoardText;
-            wonForSpin/bet >= 100 && wonForSpin/bet < 200 ? bigWinBoardText.innerHTML = "Мега виграш!" : bigWinBoardText;
-            wonForSpin/bet >= 200 ? bigWinBoardText.innerHTML = "Грандіозний виграш!" : bigWinBoardText;
+            if(wonForSpin/bet >= 30 && wonForSpin/bet < 50) { bigWinBoardText.innerHTML = "Великий виграш!"; }
+            if(wonForSpin/bet >= 50 && wonForSpin/bet < 100) { bigWinBoardText.innerHTML = "Супер великий виграш!"; }
+            if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
+            if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
+
+            outputNumber(wonForSpin, 'bigWinBoardValue');
+            await sleep(10000);
+
+            bigWinBoard.style.visibility = "hidden";
+            bonusMusic.play();
         }
 
         wonForSpin = 0;
     }
+    
+    wonArea.innerHTML = bonusGameWon;
 
     if(payLinesIndex > 0) {
         await drawPlayedLines();
@@ -813,36 +855,16 @@ let calculateWon = () => {
         
         multiplyDetected == 0 ? multiplyDetected = 1 : multiplyDetected;
 
-        if(paySymbol == 1) {
-            lineWon = bet * payTable[0].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 2) {
-            lineWon = bet * payTable[1].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 3) {
-            lineWon = bet * payTable[2].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 4) {
-            lineWon = bet * payTable[3].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 5) {
-            lineWon = bet * payTable[4].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 6) {
-            lineWon = bet * payTable[5].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 7) {
-            lineWon = bet * payTable[6].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 8) {
-            lineWon = bet * payTable[7].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 9) {
-            lineWon = bet * payTable[8].pay[counter-1] * multiplyDetected;
-        }
-        if(paySymbol == 10) {
-            lineWon = bet * payTable[9].pay[counter-1] * multiplyDetected;
-        }
+        if(paySymbol == 1) { lineWon = bet * payTable[0].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 2) { lineWon = bet * payTable[1].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 3) { lineWon = bet * payTable[2].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 4) { lineWon = bet * payTable[3].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 5) { lineWon = bet * payTable[4].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 6) { lineWon = bet * payTable[5].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 7) { lineWon = bet * payTable[6].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 8) { lineWon = bet * payTable[7].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 9) { lineWon = bet * payTable[8].pay[counter-1] * multiplyDetected; }
+        if(paySymbol == 10) { lineWon = bet * payTable[9].pay[counter-1] * multiplyDetected; }
 
         totalWon += lineWon;
         wonForSpin = totalWon;
