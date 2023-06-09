@@ -2,7 +2,7 @@ let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStart
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/bonusMusic.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3');
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3');
 
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0;
 
@@ -444,6 +444,7 @@ let continueGame = () => {
 let continueStandartGame = () => {
     let bonusGameEnded = document.querySelector("#bonusGameEnded");
     let balanceArea = document.getElementById('balance');
+    let bonusBackground = document.querySelector('body');
     bonusGameEnded.style.visibility = "hidden";
     balance += bonusGameWon;
     balanceArea.innerHTML = balance;
@@ -452,6 +453,7 @@ let continueStandartGame = () => {
     bonusGameWon = 0;
 
     bonusMusic.pause();
+    bonusBackground.style.backgroundImage = "url('images/Background.png')";
     slotMusic.play();
 
     isLocked == false;
@@ -770,7 +772,9 @@ let playBonuseGame = async () => {
     let bonusGameEnded = document.querySelector("#bonusGameEnded");
     let bonusGameEndedBoardValue = document.querySelector("#bonusGameEndedBoardValue");
     let freespinsArea = document.querySelector("#freespinsArea");
+    let bonusBackground = document.querySelector('body');
 
+    bonusBackground.style.backgroundImage = "url('images/BonusBackground.png')";
     bonusGame.style.visibility = "hidden";
     freespinsArea.style.visibility = "visible";
     bonusGameWon = 0;
