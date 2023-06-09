@@ -333,7 +333,7 @@ h3 {
     width: 80%;
     height: 600px;
     background: linear-gradient(149deg, rgba(24,187,156,1) 0%, rgba(106,57,175,1) 42%, rgba(187,24,148,1) 72%, rgba(115,53,134,1) 100%);
-    animation: gradient 10s infinite linear; 
+    animation: gradient 10s infinite linear, pulse 2s ease-in-out infinite; 
     background-size: 500%;
     border-radius: 25px;
     border: 4px solid rgb(255, 221, 0);
@@ -342,7 +342,6 @@ h3 {
     align-items: center;
     justify-content: center;
     transform: scale(.95);
-    animation: pulse 2s ease-in-out infinite;
     z-index: 2;
 }
 .bigWinBoard-text {
@@ -405,7 +404,6 @@ h3 {
     width: 80%;
     height: 600px;
     background: linear-gradient(149deg, rgba(24,187,156,1) 0%, rgba(106,57,175,1) 42%, rgba(187,24,148,1) 72%, rgba(115,53,134,1) 100%);
-    animation: gradient 10s infinite linear; 
     background-size: 500%;
     border-radius: 25px;
     border: 4px solid rgb(255, 221, 0);
@@ -413,12 +411,12 @@ h3 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transform: scale(.95);
-    animation: pulse 2s ease-in-out infinite;
     z-index: 2;
 }
 .bonusGame-block h2 {
     margin-top: 60px;
+    transform: scale(.95);
+    animation: pulse 2s ease-in-out infinite; 
 }
 .bonusGame-background, .bonusGameEnded-background {
     position: absolute;
