@@ -337,18 +337,26 @@ let betDown = () => {
 
 let drawPlayedLines = async () => {
     for(let i = 0; i < payLinesIndex; i++) {
-        for(let j = 0; j < payLines[i].length; j++) {
-            let point = document.getElementById(payLines[i][j]);
-
-            point.style.backgroundColor = "yellow";
+        for(let j = 1; j < 6; j++) {
+            if(payLines[i][j] != null) {
+                let point = document.getElementById(payLines[i][j]);
+                point.style.backgroundColor = "yellow";
+            } else {
+                let point = document.getElementById(lines[payLines[i][0]].array[j-1]);
+                point.style.backgroundColor = "rgb(255, 255, 213)";
+            }
         }
 
         await sleep(750);
 
-        for(let j = 0; j < payLines[i].length; j++) {
-            let point = document.getElementById(payLines[i][j]);
-
-            point.style.backgroundColor = "white"; 
+        for(let j = 1; j < 6; j++) {
+            if(payLines[i][j] != null) {
+                let point = document.getElementById(payLines[i][j]);
+                point.style.backgroundColor = "white";
+            } else {
+                let point = document.getElementById(lines[payLines[i][0]].array[j-1]);
+                point.style.backgroundColor = "white";
+            }
         }
     } 
 }
@@ -856,6 +864,8 @@ let calculateWon = () => {
         }
 
         let multiplyDetected = 0;
+
+        preArray[preArrayIndex++] = line;
 
         if(paySymbol != 11) {
             for(let i = 0; i < 5; i++) {
