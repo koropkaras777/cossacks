@@ -135,7 +135,7 @@ h3 {
     border-bottom: 2px solid black;
 }
 .bet-area {
-    width: 600px;
+    width: 300px;
     height: 100px;
     display: flex;
     flex-direction: row;
@@ -287,7 +287,7 @@ h3 {
     background-color: white;
     background-image: url(images/spin.png);
     background-repeat: no-repeat;
-    background-size: 124px 124px;
+    background-size: 114px 114px;
     background-position: center;
     border: 2px solid black;
     opacity: 0.8;
@@ -296,15 +296,16 @@ h3 {
     cursor: pointer;
     opacity: 1;
 }
-.spin-button:active {
+.spin-button:active, .spinButtonActive {
     width: 138px;
     height: 138px;
     opacity: 1;
     background-size: 110px 110px;
 }
 
+
 .won-navigation {
-    width: 600px;
+    width: 300px;
     height: 100px;
     display: flex;
     flex-direction: row;
@@ -312,7 +313,7 @@ h3 {
     justify-content: space-evenly;
 }
 .balance, .won {
-    width: 270px;
+    width: 134px;
     height: 64px;
     display: flex;
     flex-direction: column;

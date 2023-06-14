@@ -482,8 +482,11 @@ let spin = async () => {
     let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
     let bigWinBoardText = document.querySelector('#bigWinBoardText');
     let balanceArea = document.getElementById('balance');
+    let spinButton = document.getElementById('spinButton');
+
     bigWinBoard.style.visibility = "hidden";
-    
+    spinButton.classList.add('spinButtonActive');
+
     if(balance >= bet) {
         balance -= bet;
         balanceArea.innerHTML = balance;
@@ -491,7 +494,6 @@ let spin = async () => {
         checkBonusBuy();
         playSpin();
         await drawSpin();
-        await sleep(500);
 
         let wonArea = document.querySelector('#won');
 
@@ -528,6 +530,8 @@ let spin = async () => {
         if(payLinesIndex > 0) {
             await drawPlayedLines();
         }
+
+        spinButton.classList.remove('spinButtonActive');
 
         if(bonusGameStarted == true) {
             let bonusArea = document.querySelector('#bonusGameBoard');
