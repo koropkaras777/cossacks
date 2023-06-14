@@ -2,9 +2,9 @@ let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStart
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3');
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), wonSound = new Audio('sound/wonSound.wav');
 
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0;
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0;
 
 let payTable = [
     { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
@@ -85,6 +85,10 @@ let lines = [
     ] },
 ]
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#previewContainer').style.visibility = 'visible';
+});
+
 document.body.onkeyup = (e) => {
     if ((e.key == " " ||
         e.code == "Space" ||      
@@ -95,6 +99,16 @@ document.body.onkeyup = (e) => {
 
 let sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+let closePreview = () => {
+    document.querySelector('#previewContainer').style.visibility = 'hidden';
+    document.querySelector('#gameContainer').style.visibility = 'visible';
+
+    updateGame();
+    musicSelected();
+    
+    slotMusic.play();
 }
 
 let outputNumber = (number, elementId) => {
@@ -137,6 +151,7 @@ let musicSelected = () => {
         bonusMusicStart.volume = 1;
         bigWinSound.volume = 1;
         bigWinSoundStart.volume = 1;
+        wonSound.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -148,6 +163,7 @@ let musicSelected = () => {
         bonusMusicStart.volume = 0;
         bigWinSound.volume = 0;
         bigWinSoundStart.volume = 0;
+        wonSound.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -462,8 +478,6 @@ let continueStandartGame = () => {
 let spin = async () => {
     isLocked = true;
 
-    slotMusic.play();
-
     let bigWinBoard = document.querySelector('#bigWinBoard');
     let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
     let bigWinBoardText = document.querySelector('#bigWinBoardText');
@@ -502,6 +516,8 @@ let spin = async () => {
                 bigWinBoard.style.visibility = "hidden";
                 slotMusic.play();
             }
+
+            wonSound.play();
 
             balance += wonForSpin;
             wonArea.innerHTML = wonForSpin;
@@ -561,6 +577,8 @@ let playBonusSpin = async () => {
             bigWinBoard.style.visibility = "hidden";
             bonusMusic.play();
         }
+
+        wonSound.play();
 
         wonForSpin = 0;
     }
@@ -876,5 +894,3 @@ let calculateWon = () => {
 
     bonusGameWon += totalWon;
 }
-
-updateGame();

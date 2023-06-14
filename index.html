@@ -5,306 +5,316 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div class="game">
-            <div class="game-area" id="area">
-                <div class="gamearea-col" id="gameareaCol0"></div>
-                <div class="gamearea-col" id="gameareaCol1"></div>
-                <div class="gamearea-col" id="gameareaCol2"></div>
-                <div class="gamearea-col" id="gameareaCol3"></div>
-                <div class="gamearea-col" id="gameareaCol4"></div>
+        <div class="preview" id="previewContainer">
+            <div class="preview-container" onclick="closePreview()">
+                <img class="previewImage" src="images/preview.png"/>
+                <h2>Натисніть будь де, щоб розпочати</h2>
             </div>
+            <div class="preview-background"></div>
         </div>
-        <div class="footer">
-            <div class="navigation">
-                <div class="bet-area">
-                    <div class="bet-box">
-                        <div class="bet-text">Ставка</div>
-                        <div class="bet-size">
-                            <div class="betChange-button">
-                                <div class="bet-down" onclick="betDown()">-</div>
+        <div class="game-container" id="gameContainer">
+            <div class="game">
+                <div class="game-area" id="area">
+                    <div class="gamearea-col" id="gameareaCol0"></div>
+                    <div class="gamearea-col" id="gameareaCol1"></div>
+                    <div class="gamearea-col" id="gameareaCol2"></div>
+                    <div class="gamearea-col" id="gameareaCol3"></div>
+                    <div class="gamearea-col" id="gameareaCol4"></div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="navigation">
+                    <div class="bet-area">
+                        <div class="bet-box">
+                            <div class="bet-text">Ставка</div>
+                            <div class="bet-size">
+                                <div class="betChange-button">
+                                    <div class="bet-down" onclick="betDown()">-</div>
+                                </div>
+                                <div class="bet" id="bet">50</div>
+                                <div class="betChange-button">
+                                    <div class="bet-up" onclick="betUp()">+</div>
+                                </div>
                             </div>
-                            <div class="bet" id="bet">50</div>
-                            <div class="betChange-button">
-                                <div class="bet-up" onclick="betUp()">+</div>
+                        </div>
+                    </div>
+                    <div class="spin-area">
+                        <div class="spin-button" id="spinButton" onclick="spinWithSpinButton()"></div>
+                    </div>
+                    <div class="won-navigation">
+                        <div class="balance">
+                            <div class="balance-text">Баланс</div>
+                            <div class="balance-area" id="balance">100000</div>
+                        </div>
+                        <div class="won">
+                            <div class="won-text">Виграш</div>
+                            <div class="won-area" id="won">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="middle-navigation">
+                <div class="middle-box">
+                    <div class="middleBoxButton">
+                        <div class="music-button" onclick="musicSelected()" id="musicButton"></div>
+                    </div>
+                    <div class="middleBoxButton">
+                        <div class="bonusBuy-button" onclick="bonusBuy()" id="bonusBuyButton"></div>
+                    </div>
+                    <div class="middleBoxButton">
+                        <div class="info-button" onclick="openInformation()" id="openInfoButton"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bigWinBoard" id="bigWinBoard">
+                <div class="bigWinBoard-background"></div>
+                <div class="bigWinBoard-block">
+                    <div class="bigWinBoard-text" id="bigWinBoardText">Великий виграш!</div>
+                    <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
+                </div>
+            </div>
+            <div class="bonusGame" id="bonusGameBoard" onclick="playBonuseGame()">
+                <div class="bonusGame-background"></div>
+                <div class="bonusGame-block">
+                    <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
+                    <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
+                    <h2>Натисніть будь-де, щоб розпочати безкоштовні обертання</h2>
+                </div>
+            </div>
+            <div class="bonusBuy" id="bonusBuy">
+                <div class="bonusBuy-text">Придбати безкоштовні спіни з липкими вайлдами</div>
+                <div class="bonusBuy-box">
+                    <div class="bonusBuy-card">
+                        <div class="bonusBuy-card-text">10 спінів</div>
+                        <div class="bonusBuy-card-price" id="bonusBuyPrice10">Ціна 100</div>
+                        <div class="bonusBuy-button-area">
+                            <div class="bonusBuy-card-button" onclick="buy(10)">Придбати</div>
+                        </div>
+                    </div>
+                    <div class="bonusBuy-card">
+                        <div class="bonusBuy-card-text">15 спінів</div>
+                        <div class="bonusBuy-card-price" id="bonusBuyPrice15">Ціна 300</div>
+                        <div class="bonusBuy-button-area">
+                            <div class="bonusBuy-card-button" onclick="buy(15)">Придбати</div>
+                        </div>
+                    </div>
+                    <div class="bonusBuy-card">
+                        <div class="bonusBuy-card-text">20 спінів</div>
+                        <div class="bonusBuy-card-price" id="bonusBuyPrice20">Ціна 650</div>
+                        <div class="bonusBuy-button-area">
+                            <div class="bonusBuy-card-button" onclick="buy(20)">Придбати</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bet-size" id="betSizeBonusBuy">
+                    <div class="betChange-button">
+                        <div class="bet-down" onclick="betDown()">-</div>
+                    </div>
+                    <div class="bet" id="bet2">50</div>
+                    <div class="betChange-button">
+                        <div class="bet-up" onclick="betUp()">+</div>
+                    </div>
+                </div>
+                <div class="closeButtonBonusBuy-area">
+                    <div class="closeButtonBonusBuy" onclick="closeBonusBuy()"></div>
+                </div>
+                <div class="bonusBuy-background"></div>
+            </div>
+            <div class="bonusGameEnded" id="bonusGameEnded" onclick="continueStandartGame()">
+                <div class="bonusGameEnded-background"></div>
+                <div class="bonusGame-block">
+                    <div class="bonusGameEnded-text">Вітаємо!</div>
+                    <div class="bonusGameEnded-value" id="bonusGameEndedBoardValue">Ви виграли 10000 в 10 безкоштовних обертаннях</div>
+                    <h2>Натисніть будь-де, щоб продовжити</h2>
+                </div> 
+            </div>
+            <div class="freespins-area" id="freespinsArea">Залишилося 9 з 10 безкоштовних обертань</div>
+            <div class="informationBlock" id="informationBoard">
+                <div class="informationBlock-area">
+                    <h2>Правила гри</h2>
+                    <h3>Всі символи оплачуються зліва направо</h3>
+                    <div class="payTable">
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/J.png"/>
+                            <div class="payInformation" id="pay1"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Q.png"/>
+                            <div class="payInformation" id="pay2"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/K.png"/>
+                            <div class="payInformation" id="pay3"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/A.png"/>
+                            <div class="payInformation" id="pay4"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Trophy.png"/>
+                            <div class="payInformation" id="pay5"> </div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Oil.png"/>
+                            <div class="payInformation" id="pay6"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/House.png"/>
+                            <div class="payInformation" id="pay7"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Oko.png"/>
+                            <div class="payInformation" id="pay8"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Tur.png"/>
+                            <div class="payInformation" id="pay9"></div>
+                        </div>
+                        <div class="payTable-symbol">
+                            <img class="symbolImage" src="images/Graj.png"/>
+                            <div class="payInformation" id="pay10"></div>
+                        </div>
+                    </div>
+                    <div class="unicumSymbols">
+                        <div class="unicumSymbols-symbol">
+                            <img class="symbolImage" src="images/Wildx1.png"/>
+                            <div class="unicumSymbols-information">
+                                <b>Символ вайлд х1.</b>
+                                <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
+                                <b>Поєднує символи на лінії.</b>
+                            </div>
+                        </div>
+                        <div class="unicumSymbols-symbol">
+                            <img class="symbolImage" src="images/Wildx2.png"/>
+                            <div class="unicumSymbols-information">
+                                <b>Символ вайлд х2.</b>
+                                <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
+                                <b>Множить виграш на лінії в 2 рази.</b>
+                            </div>
+                        </div>
+                        <div class="unicumSymbols-symbol">
+                            <img class="symbolImage" src="images/Wildx3.png"/>
+                            <div class="unicumSymbols-information">
+                                <b>Символ вайлд х3.</b>
+                                <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
+                                <b>Множить виграш на лінії в 3 рази.</b>
+                            </div>
+                        </div>
+                        <div class="unicumSymbols-symbol">
+                            <img class="symbolImage" src="images/Scatter.png"/>
+                            <div class="unicumSymbols-information">
+                                <b>Символ бонус</b>
+                                <b>З'являється на всіх барабанах</b>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="spin-area">
-                    <div class="spin-button" id="spinButton" onclick="spinWithSpinButton()"></div>
-                </div>
-                <div class="won-navigation">
-                    <div class="balance">
-                        <div class="balance-text">Баланс</div>
-                        <div class="balance-area" id="balance">100000</div>
-                    </div>
-                    <div class="won">
-                        <div class="won-text">Виграш</div>
-                        <div class="won-area" id="won">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="middle-navigation">
-            <div class="middle-box">
-                <div class="middleBoxButton">
-                    <div class="music-button" onclick="musicSelected()" id="musicButton"></div>
-                </div>
-                <div class="middleBoxButton">
-                    <div class="bonusBuy-button" onclick="bonusBuy()" id="bonusBuyButton"></div>
-                </div>
-                <div class="middleBoxButton">
-                    <div class="info-button" onclick="openInformation()" id="openInfoButton"></div>
-                </div>
-            </div>
-        </div>
-        <div class="bigWinBoard" id="bigWinBoard">
-            <div class="bigWinBoard-background"></div>
-            <div class="bigWinBoard-block">
-                <div class="bigWinBoard-text" id="bigWinBoardText">Великий виграш!</div>
-                <div class="bigWinBoard-value" id="bigWinBoardValue">1000</div>
-            </div>
-        </div>
-        <div class="bonusGame" id="bonusGameBoard" onclick="playBonuseGame()">
-            <div class="bonusGame-background"></div>
-            <div class="bonusGame-block">
-                <div class="bonusGame-text" id="bonusGameBoardText">Вітаємо!</div>
-                <div class="bonusGame-value" id="bonusGameBoardValue">Ви виграли 10 безкоштовних обертань</div>
-                <h2>Натисніть будь-де, щоб розпочати безкоштовні обертання</h2>
-            </div>
-        </div>
-        <div class="bonusBuy" id="bonusBuy">
-            <div class="bonusBuy-text">Придбати безкоштовні спіни з липкими вайлдами</div>
-            <div class="bonusBuy-box">
-                <div class="bonusBuy-card">
-                    <div class="bonusBuy-card-text">10 спінів</div>
-                    <div class="bonusBuy-card-price" id="bonusBuyPrice10">Ціна 100</div>
-                    <div class="bonusBuy-button-area">
-                        <div class="bonusBuy-card-button" onclick="buy(10)">Придбати</div>
-                    </div>
-                </div>
-                <div class="bonusBuy-card">
-                    <div class="bonusBuy-card-text">15 спінів</div>
-                    <div class="bonusBuy-card-price" id="bonusBuyPrice15">Ціна 300</div>
-                    <div class="bonusBuy-button-area">
-                        <div class="bonusBuy-card-button" onclick="buy(15)">Придбати</div>
-                    </div>
-                </div>
-                <div class="bonusBuy-card">
-                    <div class="bonusBuy-card-text">20 спінів</div>
-                    <div class="bonusBuy-card-price" id="bonusBuyPrice20">Ціна 650</div>
-                    <div class="bonusBuy-button-area">
-                        <div class="bonusBuy-card-button" onclick="buy(20)">Придбати</div>
-                    </div>
-                </div>
-            </div>
-            <div class="bet-size" id="betSizeBonusBuy">
-                <div class="betChange-button">
-                    <div class="bet-down" onclick="betDown()">-</div>
-                </div>
-                <div class="bet" id="bet2">50</div>
-                <div class="betChange-button">
-                    <div class="bet-up" onclick="betUp()">+</div>
-                </div>
-            </div>
-            <div class="closeButtonBonusBuy-area">
-                <div class="closeButtonBonusBuy" onclick="closeBonusBuy()"></div>
-            </div>
-            <div class="bonusBuy-background"></div>
-        </div>
-        <div class="bonusGameEnded" id="bonusGameEnded" onclick="continueStandartGame()">
-            <div class="bonusGameEnded-background"></div>
-            <div class="bonusGame-block">
-                <div class="bonusGameEnded-text">Вітаємо!</div>
-                <div class="bonusGameEnded-value" id="bonusGameEndedBoardValue">Ви виграли 10000 в 10 безкоштовних обертаннях</div>
-                <h2>Натисніть будь-де, щоб продовжити</h2>
-            </div> 
-        </div>
-        <div class="freespins-area" id="freespinsArea">Залишилося 9 з 10 безкоштовних обертань</div>
-        <div class="informationBlock" id="informationBoard">
-            <div class="informationBlock-area">
-                <h2>Правила гри</h2>
-                <h3>Всі символи оплачуються зліва направо</h3>
-                <div class="payTable">
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/J.png"/>
-                        <div class="payInformation" id="pay1"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Q.png"/>
-                        <div class="payInformation" id="pay2"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/K.png"/>
-                        <div class="payInformation" id="pay3"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/A.png"/>
-                        <div class="payInformation" id="pay4"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Trophy.png"/>
-                        <div class="payInformation" id="pay5"> </div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Oil.png"/>
-                        <div class="payInformation" id="pay6"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/House.png"/>
-                        <div class="payInformation" id="pay7"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Oko.png"/>
-                        <div class="payInformation" id="pay8"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Tur.png"/>
-                        <div class="payInformation" id="pay9"></div>
-                    </div>
-                    <div class="payTable-symbol">
-                        <img class="symbolImage" src="images/Graj.png"/>
-                        <div class="payInformation" id="pay10"></div>
-                    </div>
-                </div>
-                <div class="unicumSymbols">
-                    <div class="unicumSymbols-symbol">
-                        <img class="symbolImage" src="images/Wildx1.png"/>
-                        <div class="unicumSymbols-information">
-                            <b>Символ вайлд х1.</b>
-                            <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
-                            <b>Поєднує символи на лінії.</b>
+                    <h3>Лінії виплат</h3>
+                    <div class="payLines">
+                        <div class="payLines-item">
+                            <b>1</b>
+                            <img class="payLineImage" src="images/lines/line1.png"/>
                         </div>
-                    </div>
-                    <div class="unicumSymbols-symbol">
-                        <img class="symbolImage" src="images/Wildx2.png"/>
-                        <div class="unicumSymbols-information">
-                            <b>Символ вайлд х2.</b>
-                            <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
-                            <b>Множить виграш на лінії в 2 рази.</b>
+                        <div class="payLines-item">
+                            <b>2</b>
+                            <img class="payLineImage" src="images/lines/line2.png"/>
                         </div>
-                    </div>
-                    <div class="unicumSymbols-symbol">
-                        <img class="symbolImage" src="images/Wildx3.png"/>
-                        <div class="unicumSymbols-information">
-                            <b>Символ вайлд х3.</b>
-                            <b>З'являється на 2, 3 і 4 барабанах в бонусних спінах.</b>
-                            <b>Множить виграш на лінії в 3 рази.</b>
+                        <div class="payLines-item">
+                            <b>3</b>
+                            <img class="payLineImage" src="images/lines/line3.png"/>
                         </div>
-                    </div>
-                    <div class="unicumSymbols-symbol">
-                        <img class="symbolImage" src="images/Scatter.png"/>
-                        <div class="unicumSymbols-information">
-                            <b>Символ бонус</b>
-                            <b>З'являється на всіх барабанах</b>
+                        <div class="payLines-item">
+                            <b>4</b>
+                            <img class="payLineImage" src="images/lines/line4.png"/>
                         </div>
+                        <div class="payLines-item">
+                            <b>5</b>
+                            <img class="payLineImage" src="images/lines/line5.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>6</b>
+                            <img class="payLineImage" src="images/lines/line6.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>7</b>
+                            <img class="payLineImage" src="images/lines/line7.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>8</b>
+                            <img class="payLineImage" src="images/lines/line8.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>9</b>
+                            <img class="payLineImage" src="images/lines/line9.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>10</b>
+                            <img class="payLineImage" src="images/lines/line10.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>11</b>
+                            <img class="payLineImage" src="images/lines/line11.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>12</b>
+                            <img class="payLineImage" src="images/lines/line12.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>13</b>
+                            <img class="payLineImage" src="images/lines/line13.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>14</b>
+                            <img class="payLineImage" src="images/lines/line14.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>15</b>
+                            <img class="payLineImage" src="images/lines/line15.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>16</b>
+                            <img class="payLineImage" src="images/lines/line16.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>17</b>
+                            <img class="payLineImage" src="images/lines/line17.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>18</b>
+                            <img class="payLineImage" src="images/lines/line18.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>19</b>
+                            <img class="payLineImage" src="images/lines/line19.png"/>
+                        </div>
+                        <div class="payLines-item">
+                            <b>20</b>
+                            <img class="payLineImage" src="images/lines/line20.png"/>
+                        </div>
+    
+                    </div>
+                    <h3>Безкоштовні обертання</h3>
+                    <div class="freeSpins-information">
+                        <b>Отримай від 3 до 5 символів бонус для отримання безкоштовних обертань.</b><br>
+                        <b>3 символи бонус надають 10 безкоштовних обертань</b>
+                        <b>4 символи бонус надають 15 безкоштовних обертань</b>
+                        <b>5 символів бонус надають 20 безкоштовних обертань</b><br>
+                        <b>Безкоштовні обертання також можна придбати. Під час прокруту безкоштовних спінів на 3, 4 і 5 барабанах випадковим чином з'являються липкі вайлди з множником х1, х2 і х3.</b><br>
+                        <b>Максимальний виграш в безкоштовних обертаннях - х5000. При досягненні виграшу більше х5000 безкоштовні обертання припиняються і максимальний виграш нараховується на ігровий рахунок.</b>
+                    </div>
+                    <h3>Додаткова інформація</h3>
+                    <div class="freeSpins-information">
+                        <b>Теоретичний RTP в цій грі 98.61%.</b><br>
+                        <b>Мінімальна ставка: 10</b>
+                        <b>Максимальна ставка: 1000</b>
+                    </div>
+                    <div class="closeInformation">
+                        <div class="closeButtonInformation" onclick="closeInformation()"></div>
                     </div>
                 </div>
-                <h3>Лінії виплат</h3>
-                <div class="payLines">
-                    <div class="payLines-item">
-                        <b>1</b>
-                        <img class="payLineImage" src="images/lines/line1.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>2</b>
-                        <img class="payLineImage" src="images/lines/line2.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>3</b>
-                        <img class="payLineImage" src="images/lines/line3.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>4</b>
-                        <img class="payLineImage" src="images/lines/line4.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>5</b>
-                        <img class="payLineImage" src="images/lines/line5.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>6</b>
-                        <img class="payLineImage" src="images/lines/line6.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>7</b>
-                        <img class="payLineImage" src="images/lines/line7.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>8</b>
-                        <img class="payLineImage" src="images/lines/line8.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>9</b>
-                        <img class="payLineImage" src="images/lines/line9.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>10</b>
-                        <img class="payLineImage" src="images/lines/line10.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>11</b>
-                        <img class="payLineImage" src="images/lines/line11.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>12</b>
-                        <img class="payLineImage" src="images/lines/line12.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>13</b>
-                        <img class="payLineImage" src="images/lines/line13.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>14</b>
-                        <img class="payLineImage" src="images/lines/line14.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>15</b>
-                        <img class="payLineImage" src="images/lines/line15.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>16</b>
-                        <img class="payLineImage" src="images/lines/line16.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>17</b>
-                        <img class="payLineImage" src="images/lines/line17.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>18</b>
-                        <img class="payLineImage" src="images/lines/line18.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>19</b>
-                        <img class="payLineImage" src="images/lines/line19.png"/>
-                    </div>
-                    <div class="payLines-item">
-                        <b>20</b>
-                        <img class="payLineImage" src="images/lines/line20.png"/>
-                    </div>
-
-                </div>
-                <h3>Безкоштовні обертання</h3>
-                <div class="freeSpins-information">
-                    <b>Отримай від 3 до 5 символів бонус для отримання безкоштовних обертань.</b><br>
-                    <b>3 символи бонус надають 10 безкоштовних обертань</b>
-                    <b>4 символи бонус надають 15 безкоштовних обертань</b>
-                    <b>5 символів бонус надають 20 безкоштовних обертань</b><br>
-                    <b>Безкоштовні обертання також можна придбати. Під час прокруту безкоштовних спінів на 3, 4 і 5 барабанах випадковим чином з'являються липкі вайлди з множником х1, х2 і х3.</b><br>
-                    <b>Максимальний виграш в безкоштовних обертаннях - х5000. При досягненні виграшу більше х5000 безкоштовні обертання припиняються і максимальний виграш нараховується на ігровий рахунок.</b>
-                </div>
-                <h3>Додаткова інформація</h3>
-                <div class="freeSpins-information">
-                    <b>Теоретичний RTP в цій грі 98.61%.</b><br>
-                    <b>Мінімальна ставка: 10</b>
-                    <b>Максимальна ставка: 1000</b>
-                </div>
-                <div class="closeInformation">
-                    <div class="closeButtonInformation" onclick="closeInformation()"></div>
-                </div>
+                <div class="payTableBackground" onclick="closeInformation()"></div>
             </div>
-            <div class="payTableBackground" onclick="closeInformation()"></div>
         </div>
+        
         <script src="script.js"></script>
     </body>
 </html>
