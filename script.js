@@ -1,7 +1,7 @@
 let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true;
+let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), wonSound = new Audio('sound/wonSound.wav');
 
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0;
@@ -111,6 +111,30 @@ let closePreview = () => {
     slotMusic.play();
 }
 
+let doublechache = () => {
+    let doubleChancheButton = document.getElementById('doubleChancheButton');
+    let totalbet;
+    let betArea = document.getElementById('bet');
+
+    if(goldenBet == false) {
+        goldenBet = true;
+        totalbet = bet + bet / 2;
+
+        doubleChancheButton.style.color = 'rgb(194, 194, 0)';
+        doubleChancheButton.style.borderColor = 'yellow';
+
+        betArea.innerHTML = totalbet;
+    } else {
+        goldenBet = false;
+        totalbet = bet;
+
+        doubleChancheButton.style.color = 'black';
+        doubleChancheButton.style.borderColor = 'red';
+
+        betArea.innerHTML = totalbet;
+    }
+}
+
 let outputNumber = (number, elementId) => {
     let e = document.getElementById(elementId), startValue = 0, time = 8000, step = Math.round(number / 300);
 
@@ -132,11 +156,18 @@ let updateGame = () => {
     drawSpin();
     checkBonusBuy();
 
+    let totalbet;
     let betArea = document.getElementById('bet');
     let betAreaBB = document.getElementById('bet2');
     let balanceArea = document.getElementById('balance');
 
-    betArea.innerHTML = bet;
+    if(goldenBet == true) {
+        totalbet = bet + bet / 2;
+    } else {
+        totalbet = bet;
+    }
+
+    betArea.innerHTML = totalbet;
     betAreaBB.innerHTML = bet;
     balanceArea.innerHTML = balance;
 }
@@ -296,6 +327,7 @@ let betUp = () => {
         if(bet < 1000) {
             let betArea = document.querySelector('#bet');
             let betArea2 = document.querySelector('#bet2');
+            let totalbet;
     
             if(bet < 100) {
                 bet += 10;
@@ -305,7 +337,13 @@ let betUp = () => {
                 bet += 50;
             }
     
-            betArea.innerHTML = bet;
+            if(goldenBet == true) {
+                totalbet = bet + bet / 2;
+            } else {
+                totalbet = bet;
+            }
+
+            betArea.innerHTML = totalbet;
             betArea2.innerHTML = bet;
     
             checkBonusBuy();
@@ -318,6 +356,7 @@ let betDown = () => {
         if(bet > 10) {
             let betArea = document.querySelector('#bet');
             let betArea2 = document.querySelector('#bet2');
+            let totalbet;
 
             if(bet <= 100) {
                 bet -= 10;
@@ -327,7 +366,13 @@ let betDown = () => {
                 bet -= 50;
             }
 
-            betArea.innerHTML = bet;
+            if(goldenBet == true) {
+                totalbet = bet + bet / 2;
+            } else {
+                totalbet = bet;
+            }
+
+            betArea.innerHTML = totalbet;
             betArea2.innerHTML = bet;
 
             checkBonusBuy();
@@ -495,8 +540,16 @@ let spin = async () => {
     bigWinBoard.style.visibility = "hidden";
     spinButton.classList.add('spinButtonActive');
 
-    if(balance >= bet) {
-        balance -= bet;
+    let substractBalance;
+
+    if(goldenBet == true) {
+        substractBalance = bet + bet / 2;
+    } else {
+        substractBalance = bet;
+    }
+
+    if(balance >= substractBalance) {
+        balance -= substractBalance;
         balanceArea.innerHTML = balance;
 
         checkBonusBuy();
@@ -689,7 +742,13 @@ let buildSymbol = (i, j, symbol) => {
 }
 
 let generateBonusGame = () => {
-    let bonusChance = 173, scatters = 0; 
+    let bonusChance, scatters = 0; //173 //115
+
+    if(goldenBet == true) {
+        bonusChance = 115;
+    } else {
+        bonusChance = 173;
+    }
 
     if(bonusBuyActive == true) {
         if(bonusBuySpins == 3) {
