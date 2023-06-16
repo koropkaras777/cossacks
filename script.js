@@ -108,7 +108,7 @@ let closePreview = () => {
     updateGame();
     musicSelected();
     
-    slotMusic.play();
+    //slotMusic.play();
 }
 
 let doublechache = () => {
@@ -293,17 +293,17 @@ let checkBonusBuy = () => {
     if(balance < bet * 100) {
         bonusBuyPrice10.style.color = 'red';
     } else {
-        bonusBuyPrice10.style.color = 'white';
+        bonusBuyPrice10.style.color = 'black';
     }
     if(balance < bet * 300) {
         bonusBuyPrice15.style.color = 'red';
     } else {
-        bonusBuyPrice15.style.color = 'white';
+        bonusBuyPrice15.style.color = 'black';
     }
     if(balance < bet * 650) {
         bonusBuyPrice20.style.color = 'red';
     } else {
-        bonusBuyPrice20.style.color = 'white';
+        bonusBuyPrice20.style.color = 'black';
     }
 }
 

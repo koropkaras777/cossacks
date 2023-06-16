@@ -85,43 +85,45 @@
                 </div>
             </div>
             <div class="bonusBuy" id="bonusBuy">
-                <div class="bonusBuy-text">Придбати безкоштовні спіни з липкими вайлдами</div>
-                <div class="bonusBuy-box">
-                    <div class="bonusBuy-card">
-                        <div class="bonusBuy-card-text">10 спінів</div>
-                        <div class="bonusBuy-card-price" id="bonusBuyPrice10">Ціна 100</div>
-                        <div class="bonusBuy-button-area">
-                            <div class="bonusBuy-card-button" onclick="buy(10)">Придбати</div>
+                <div class="bonusBuy-block">
+                    <div class="closeButtonBonusBuy-area">
+                        <div class="closeButtonBonusBuy" onclick="closeBonusBuy()"></div>
+                    </div>
+                    <div class="bonusBuy-text">Придбати безкоштовні спіни з липкими вайлдами</div>
+                    <div class="bonusBuy-box">
+                        <div class="bonusBuy-card">
+                            <div class="bonusBuy-card-text">10 спінів</div>
+                            <div class="bonusBuy-card-price" id="bonusBuyPrice10">Ціна 100</div>
+                            <div class="bonusBuy-button-area">
+                                <div class="bonusBuy-card-button" onclick="buy(10)">Придбати</div>
+                            </div>
+                        </div>
+                        <div class="bonusBuy-card">
+                            <div class="bonusBuy-card-text">15 спінів</div>
+                            <div class="bonusBuy-card-price" id="bonusBuyPrice15">Ціна 300</div>
+                            <div class="bonusBuy-button-area">
+                                <div class="bonusBuy-card-button" onclick="buy(15)">Придбати</div>
+                            </div>
+                        </div>
+                        <div class="bonusBuy-card">
+                            <div class="bonusBuy-card-text">20 спінів</div>
+                            <div class="bonusBuy-card-price" id="bonusBuyPrice20">Ціна 650</div>
+                            <div class="bonusBuy-button-area">
+                                <div class="bonusBuy-card-button" onclick="buy(20)">Придбати</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="bonusBuy-card">
-                        <div class="bonusBuy-card-text">15 спінів</div>
-                        <div class="bonusBuy-card-price" id="bonusBuyPrice15">Ціна 300</div>
-                        <div class="bonusBuy-button-area">
-                            <div class="bonusBuy-card-button" onclick="buy(15)">Придбати</div>
+                    <div class="bet-size" id="betSizeBonusBuy">
+                        <div class="betChange-button">
+                            <div class="bet-down" onclick="betDown()">-</div>
                         </div>
-                    </div>
-                    <div class="bonusBuy-card">
-                        <div class="bonusBuy-card-text">20 спінів</div>
-                        <div class="bonusBuy-card-price" id="bonusBuyPrice20">Ціна 650</div>
-                        <div class="bonusBuy-button-area">
-                            <div class="bonusBuy-card-button" onclick="buy(20)">Придбати</div>
+                        <div class="bet" id="bet2">50</div>
+                        <div class="betChange-button">
+                            <div class="bet-up" onclick="betUp()">+</div>
                         </div>
                     </div>
                 </div>
-                <div class="bet-size" id="betSizeBonusBuy">
-                    <div class="betChange-button">
-                        <div class="bet-down" onclick="betDown()">-</div>
-                    </div>
-                    <div class="bet" id="bet2">50</div>
-                    <div class="betChange-button">
-                        <div class="bet-up" onclick="betUp()">+</div>
-                    </div>
-                </div>
-                <div class="closeButtonBonusBuy-area">
-                    <div class="closeButtonBonusBuy" onclick="closeBonusBuy()"></div>
-                </div>
-                <div class="bonusBuy-background"></div>
+                <div class="bonusBuy-background" onclick="closeBonusBuy()"></div>
             </div>
             <div class="bonusGameEnded" id="bonusGameEnded" onclick="continueStandartGame()">
                 <div class="bonusGameEnded-background"></div>
