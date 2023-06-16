@@ -108,7 +108,7 @@ let closePreview = () => {
     updateGame();
     musicSelected();
     
-    //slotMusic.play();
+    slotMusic.play();
 }
 
 let doublechache = () => {

@@ -542,7 +542,7 @@ h3 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    visibility: visible;
+    visibility: hidden;
 }
 .bonusBuy-block {
     width: 80%;
