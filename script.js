@@ -279,16 +279,31 @@ let buy = (numOfSpins) => {
 
         spin();
     }
+    if(numOfSpins == 25 && balance >= bet * 350) {
+        balance -= bet * 349;
+        bonusBuySpins = getRandomIntDiapasone(3, 6);
+        bonusBuyActive = true;
+
+        let bonusBuyArea = document.querySelector("#bonusBuy");
+        let balanceArea = document.getElementById('balance');
+
+        balanceArea.innerHTML = balance;
+        bonusBuyArea.style.visibility = 'hidden';
+
+        spin();
+    }
 }
 
 let checkBonusBuy = () => {
     let bonusBuyPrice10 = document.querySelector("#bonusBuyPrice10");
     let bonusBuyPrice15 = document.querySelector("#bonusBuyPrice15");
     let bonusBuyPrice20 = document.querySelector("#bonusBuyPrice20");
+    let bonusBuyPrice25 = document.querySelector("#bonusBuyPrice25");
 
     bonusBuyPrice10.innerHTML = bet * 100;
     bonusBuyPrice15.innerHTML = bet * 300;
     bonusBuyPrice20.innerHTML = bet * 650;
+    bonusBuyPrice25.innerHTML = bet * 350;
 
     if(balance < bet * 100) {
         bonusBuyPrice10.style.color = 'red';
@@ -304,6 +319,11 @@ let checkBonusBuy = () => {
         bonusBuyPrice20.style.color = 'red';
     } else {
         bonusBuyPrice20.style.color = 'black';
+    }
+    if(balance < bet * 350) {
+        bonusBuyPrice25.style.color = 'red';
+    } else {
+        bonusBuyPrice25.style.color = 'black';
     }
 }
 
@@ -666,6 +686,10 @@ let getRandomInt = (max) => {
     return Math.floor(Math.random() * max) + 1;
 }
 
+let getRandomIntDiapasone = (min, max) => {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
 let generateSymbol = (symbol) => {
     symbol = getRandomInt(10);
 
@@ -741,6 +765,14 @@ let buildSymbol = (i, j, symbol) => {
     return symbol;
 }
 
+let generateColumnPositions = (min, max, size) => {
+    let result = [...Array(max - min + 1).keys()].map(i => i + min)
+    .reduce((array, elt) => (array.splice(Math.random() * (array.length + 1), 0, elt), array), [])
+    .slice(0, size);
+
+    return result;
+}
+
 let generateBonusGame = () => {
     let bonusChance, scatters = 0; //173 //115
 
@@ -752,17 +784,25 @@ let generateBonusGame = () => {
 
     if(bonusBuyActive == true) {
         if(bonusBuySpins == 3) {
+            let columnPositions = generateColumnPositions(0, 4, 3);
+            console.log(columnPositions);
+
             for(let i = 0; i < 3; i++) {
                 let randomPosition = getRandomInt(3);
-                gameArea[randomPosition-1][i] = 14;
+
+                gameArea[randomPosition-1][columnPositions[i]] = 14;
                 scatters++;
             }
         }
 
         if(bonusBuySpins == 4) {
+            let columnPositions = generateColumnPositions(0, 4, 4);
+            console.log(columnPositions);
+
             for(let i = 0; i < 4; i++) {
                 let randomPosition = getRandomInt(3);
-                gameArea[randomPosition-1][i] = 14;
+
+                gameArea[randomPosition-1][columnPositions[i]] = 14;
                 scatters++;
             }
         }
