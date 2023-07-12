@@ -1,10 +1,11 @@
 let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
-let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), wonSound = new Audio('sound/wonSound.wav');
+let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), wonSound = new Audio('sound/wonSound.wav');
+let payArray = [], payArrayIndex = 0;
 
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0;
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0;
 
 let payTable = [
     { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
@@ -183,6 +184,7 @@ let musicSelected = () => {
         bigWinSound.volume = 1;
         bigWinSoundStart.volume = 1;
         wonSound.volume = 1;
+        touchSound.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -195,6 +197,7 @@ let musicSelected = () => {
         bigWinSound.volume = 0;
         bigWinSoundStart.volume = 0;
         wonSound.volume = 0;
+        touchSound.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -426,36 +429,75 @@ let drawPlayedLines = async () => {
     } 
 }
 
+let drawSymbol = (symbol, payArray, i, j, scattersChecked) => {
+    symbol.style.backgroundColor = 'white';
+
+    if(payArray[i+j] == 1) { symbol.style.backgroundImage = "url('images/J.png')" };
+    if(payArray[i+j] == 2) { symbol.style.backgroundImage = "url('images/Q.png')" };
+    if(payArray[i+j] == 3) { symbol.style.backgroundImage = "url('images/K.png')" };
+    if(payArray[i+j] == 4) { symbol.style.backgroundImage = "url('images/A.png')" };
+    if(payArray[i+j] == 5) { symbol.style.backgroundImage = "url('images/Trophy.png')" };
+    if(payArray[i+j] == 6) { symbol.style.backgroundImage = "url('images/Oil.png')" };
+    if(payArray[i+j] == 7) { symbol.style.backgroundImage = "url('images/House.png')" };
+    if(payArray[i+j] == 8) { symbol.style.backgroundImage = "url('images/Oko.png')" };
+    if(payArray[i+j] == 9) { symbol.style.backgroundImage = "url('images/Tur.png')" };
+    if(payArray[i+j] == 10) { symbol.style.backgroundImage = "url('images/Graj.png')" };
+    if(payArray[i+j] == 11) { symbol.style.backgroundImage = "url('images/Wildx1.png')" };
+    if(payArray[i+j] == 12) { symbol.style.backgroundImage = "url('images/Wildx2.png')" };
+    if(payArray[i+j] == 13) { symbol.style.backgroundImage = "url('images/Wildx3.png')" };
+
+    if(payArray[i+j] == 14) {
+        scattersChecked++;
+        symbol.style.backgroundImage = "url('images/Scatter.png')";
+        symbol.style.border = '2px solid yellow';
+    } else if(payArray[i+j] >= 11 && payArray[i+j] <= 13) {
+        symbol.style.border = '2px solid blue';
+    } else {
+        symbol.style.border = '2px solid black';
+    }
+
+    symbol.style.visibility = 'visible';
+}
+
+let hiddenSymbol = (symbol) => {
+    symbol.style.visibility = 'hidden';
+}
+
 let drawSpin = async () => {
-    let payArray = [], k = 0;
-    
-    for(let i = 0; i < 5; i++) {
-        for(let j = 10; j >= 0; j -= 5) {
-            try {
-                let point = document.getElementById(i+j);
-                
-                if(bonusGameStarted) {
-                    if(point.style.backgroundImage != 'url("images/Wildx1.png")' && point.style.backgroundImage != 'url("images/Wildx2.png")' && point.style.backgroundImage != 'url("images/Wildx3.png")') {
-                        point.style.visibility = 'hidden';
-                    }
-                } else {
-                    point.style.visibility = 'hidden';
+    let scattersChecked = 0;
+
+    try {
+        for(let i = 0; i < 5; i++) {
+            let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
+
+            for(let j = 0; j < 3; j++) {
+                if(j == 0) {
+                    hiddenSymbol(firstPoint);
+                    drawSymbol(secondPoint, payArray, i, 0, scattersChecked);
+                    drawSymbol(thirdPoint, payArray, i, 5, scattersChecked);
+                } else if(j == 1) {
+                    hiddenSymbol(secondPoint);
+                    drawSymbol(thirdPoint, payArray, i, 0, scattersChecked);
+                } else if(j == 2) {
+                    hiddenSymbol(thirdPoint);
                 }
-                
-                await sleep(50);
-            } catch {
-                break;
+
+                await sleep(75);
             }
         }
+    } catch {
+        
     }
+
+    payArrayIndex = 0;
 
     for(let i = 0; i < 3; i++) {
         for(let j = 0; j < 5; j++) {
-            payArray[k++] = gameArea[i][j];
+            payArray[payArrayIndex++] = gameArea[i][j];
         }
     }
 
-    let scattersChecked = 0;
+    scattersChecked = 0;
 
     for(let i = 0; i < 5; i++) {
         let gameareaCol = document.getElementById('gameareaCol' + i);
@@ -465,15 +507,13 @@ let drawSpin = async () => {
         if(scattersChecked >= 2) {
             timeOfDraw = 500;
         } else {
-            timeOfDraw = 125;
+            timeOfDraw = 75;
         }
 
-        for(let j = 0; j < 11; j += 5) {
-            let oldPoint = document.getElementById(i+j), point = document.createElement('div');
+        if(firstDraw) {
+            for(let j = 0; j < 11; j += 5) {
+                let point = document.createElement('div');
 
-            spinSound.play();
-
-            if(!oldPoint) {
                 point.id = i + j;
                 point.className = 'point';
                 point.style.position = 'relative';
@@ -482,38 +522,33 @@ let drawSpin = async () => {
 
                 gameareaCol.appendChild(point);
                 point.style.visibility = 'visible';
-            } else {
-                oldPoint.style.backgroundColor = 'white';
 
-                if(payArray[i+j] == 1) { oldPoint.style.backgroundImage = "url('images/J.png')" };
-                if(payArray[i+j] == 2) { oldPoint.style.backgroundImage = "url('images/Q.png')" };
-                if(payArray[i+j] == 3) { oldPoint.style.backgroundImage = "url('images/K.png')" };
-                if(payArray[i+j] == 4) { oldPoint.style.backgroundImage = "url('images/A.png')" };
-                if(payArray[i+j] == 5) { oldPoint.style.backgroundImage = "url('images/Trophy.png')" };
-                if(payArray[i+j] == 6) { oldPoint.style.backgroundImage = "url('images/Oil.png')" };
-                if(payArray[i+j] == 7) { oldPoint.style.backgroundImage = "url('images/House.png')" };
-                if(payArray[i+j] == 8) { oldPoint.style.backgroundImage = "url('images/Oko.png')" };
-                if(payArray[i+j] == 9) { oldPoint.style.backgroundImage = "url('images/Tur.png')" };
-                if(payArray[i+j] == 10) { oldPoint.style.backgroundImage = "url('images/Graj.png')" };
-                if(payArray[i+j] == 11) { oldPoint.style.backgroundImage = "url('images/Wildx1.png')" };
-                if(payArray[i+j] == 12) { oldPoint.style.backgroundImage = "url('images/Wildx2.png')" };
-                if(payArray[i+j] == 13) { oldPoint.style.backgroundImage = "url('images/Wildx3.png')" };
-
-                if(payArray[i+j] == 14) {
-                    scattersChecked++;
-                    oldPoint.style.backgroundImage = "url('images/Scatter.png')";
-                    oldPoint.style.border = '2px solid yellow';
-                } else if(payArray[i+j] >= 11 && payArray[i+j] <= 13) {
-                    oldPoint.style.border = '2px solid blue';
-                } else {
-                    oldPoint.style.border = '2px solid black';
-                }
-
-                oldPoint.style.visibility = 'visible';
+                await sleep(timeOfDraw);
             }
 
-            await sleep(timeOfDraw);
+            if(i+10 == 14) {
+                firstDraw = false;
+            }
+        } else {
+            let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
+
+            for(let j = 0; j < 3; j++) {
+                if(j == 0) {
+                    drawSymbol(firstPoint, payArray, i, 10, scattersChecked);
+                } else if(j == 1) {
+                    drawSymbol(firstPoint, payArray, i, 5, scattersChecked);
+                    drawSymbol(secondPoint, payArray, i, 10, scattersChecked);
+                } else if(j == 2) {
+                    drawSymbol(firstPoint, payArray, i, 0, scattersChecked);
+                    drawSymbol(secondPoint, payArray, i, 5, scattersChecked);
+                    drawSymbol(thirdPoint, payArray, i, 10, scattersChecked);
+                }
+
+                await sleep(timeOfDraw);
+            }
         }
+
+        spinSound.play();
     }
 }
 
@@ -560,6 +595,8 @@ let spin = async () => {
     bigWinBoard.style.visibility = "hidden";
     spinButton.classList.add('spinButtonActive');
 
+    touchSound.play();
+    
     let substractBalance;
 
     if(goldenBet == true) {
@@ -785,7 +822,6 @@ let generateBonusGame = () => {
     if(bonusBuyActive == true) {
         if(bonusBuySpins == 3) {
             let columnPositions = generateColumnPositions(0, 4, 3);
-            console.log(columnPositions);
 
             for(let i = 0; i < 3; i++) {
                 let randomPosition = getRandomInt(3);
