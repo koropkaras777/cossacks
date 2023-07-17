@@ -2,10 +2,11 @@ let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStart
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), wonSound = new Audio('sound/wonSound.wav');
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), wonSound = new Audio('sound/wonSound.wav');
 let payArray = [], payArrayIndex = 0;
+let cancelled = false;
 
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0;
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0, bigWinSoundEnd.volume = 0;
 
 let payTable = [
     { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
@@ -91,11 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.body.onkeyup = (e) => {
-    if ((e.key == " " ||
+    if (e.key == " " ||
         e.code == "Space" ||      
-        e.keyCode == 32) && isLocked == false) {
-        spin();
-    }
+        e.keyCode == 32) {
+            if(isLocked == false) {
+                spin();
+            }
+            
+            stopFunction();
+        }
+}
+
+let stopFunction = () => {
+    cancelled = true;
 }
 
 let sleep = (ms) => {
@@ -136,21 +145,39 @@ let doublechache = () => {
     }
 }
 
-let outputNumber = (number, elementId) => {
-    let e = document.getElementById(elementId), startValue = 0, time = 8000, step = Math.round(number / 300);
+let drawNumber = async (e, startValue, step, number, t) => {
+    return new Promise(resolve => {
+        let interval = setInterval(() => {
+            startValue = startValue + step;
+    
+            e.innerHTML = startValue;
+    
+            if(cancelled) {
+                cancelled = false;
+    
+                e.innerHTML = number;
+                clearInterval(interval);
+                resolve('end');
+    
+                bigWinSound.pause();
+                bigWinSoundEnd.play();
+            }
+    
+            if (startValue >= number) {
+                e.innerHTML = number;
+                clearInterval(interval);
+                resolve('end');
+            }
+        }, t);
 
+    })
+}
+
+let outputNumber = async (number, elementId) => {
+    let e = document.getElementById(elementId), startValue = 0, time = 8000, step = Math.round(number / 300);
     let t = Math.round(time / (number / step));
 
-    let interval = setInterval(() => {
-        startValue = startValue + step;
-
-        e.innerHTML = startValue;
-
-        if (startValue >= number) {
-            e.innerHTML = number;
-            clearInterval(interval);
-        }
-    }, t);
+    let stop = await drawNumber(e, startValue, step, number, t);
 }
 
 let updateGame = () => {
@@ -185,6 +212,7 @@ let musicSelected = () => {
         bigWinSoundStart.volume = 1;
         wonSound.volume = 1;
         touchSound.volume = 1;
+        bigWinSoundEnd.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -198,6 +226,7 @@ let musicSelected = () => {
         bigWinSoundStart.volume = 0;
         wonSound.volume = 0;
         touchSound.volume = 0;
+        bigWinSoundEnd.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -404,6 +433,8 @@ let betDown = () => {
 }
 
 let drawPlayedLines = async () => {
+    cancelled = false;
+
     for(let i = 0; i < payLinesIndex; i++) {
         for(let j = 1; j < 6; j++) {
             if(payLines[i][j] != null) {
@@ -425,6 +456,12 @@ let drawPlayedLines = async () => {
                 let point = document.getElementById(lines[payLines[i][0]].array[j-1]);
                 point.style.backgroundColor = "white";
             }
+        }
+
+        if(cancelled) {
+            cancelled = false;
+
+            return;
         }
     } 
 }
@@ -622,6 +659,7 @@ let spin = async () => {
                 await sleep(2000);
 
                 bigWinSound.play();
+                bigWinSound.currentTime = 0;
                 bigWinBoardValue.innerHTML = wonForSpin;
                 bigWinBoard.style.visibility = "visible";
 
@@ -630,8 +668,8 @@ let spin = async () => {
                 if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
                 if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
 
-                outputNumber(wonForSpin, 'bigWinBoardValue');
-                await sleep(10000);
+                await outputNumber(wonForSpin, 'bigWinBoardValue');
+                await sleep(1000);
 
                 bigWinBoard.style.visibility = "hidden";
                 slotMusic.play();
@@ -657,6 +695,7 @@ let spin = async () => {
 
             slotMusic.pause();
             bonusMusicStart.play();
+            bonusMusicStart.currentTime = 0;
 
             bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
             bonusArea.style.visibility = "visible";
@@ -685,6 +724,7 @@ let playBonusSpin = async () => {
             await sleep(2000);
 
             bigWinSound.play();
+            bigWinSound.currentTime = 0;
             bigWinBoardValue.innerHTML = wonForSpin;
             bigWinBoard.style.visibility = "visible";
 
@@ -693,8 +733,8 @@ let playBonusSpin = async () => {
             if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
             if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
 
-            outputNumber(wonForSpin, 'bigWinBoardValue');
-            await sleep(10000);
+            await outputNumber(wonForSpin, 'bigWinBoardValue');
+            await sleep(1500);
 
             bigWinBoard.style.visibility = "hidden";
             bonusMusic.play();
@@ -755,13 +795,13 @@ let generateSymbol = (symbol) => {
 }
 
 let generateWilds = () => {
-    let chance = getRandomInt(3010);
+    let chance = getRandomInt(695); //3010
 
     if(chance >= 1 && chance <= 695) {
         let generatedWild, wild = getRandomInt(3);
         let wildPositionI = getRandomInt(3), wildPositionJ = getRandomInt(3);
 
-        generatedWild = wild + 10;
+        generatedWild = wild + 10; 
 
         if(gameArea[wildPositionI-1][wildPositionJ] < 11) {
             wildMemory[wildMemoryItems++] = [generatedWild, wildPositionI-1, wildPositionJ];
