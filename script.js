@@ -795,7 +795,7 @@ let generateSymbol = (symbol) => {
 }
 
 let generateWilds = () => {
-    let chance = getRandomInt(695); //3010
+    let chance = getRandomInt(2410); //3010
 
     if(chance >= 1 && chance <= 695) {
         let generatedWild, wild = getRandomInt(3);
