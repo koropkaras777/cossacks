@@ -4,7 +4,7 @@ let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), wonSound = new Audio('sound/wonSound.wav');
 let payArray = [], payArrayIndex = 0;
-let cancelled = false, timePressed;
+let cancelled = false, timePressed, continueSpin = true;
 
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0, bigWinSoundEnd.volume = 0;
 
@@ -691,8 +691,6 @@ let drawSpin = async (isTurbo) => {
     }
 }
 
-let continueSpin = true;
-
 spinButton.addEventListener('mouseleave', () => {
     continueSpin = false;
 })
@@ -771,6 +769,10 @@ let continueStandartGame = () => {
 }
 
 let turboSpin = async () => {
+    if(bonusGameStarted) {
+        return;
+    }
+    
     isLocked = true;
 
     let bigWinBoard = document.querySelector('#bigWinBoard');
@@ -1093,7 +1095,7 @@ let generateBonusGame = () => {
     if(goldenBet == true) {
         bonusChance = 115;
     } else {
-        bonusChance = 173;
+        bonusChance = 50;
     }
 
     if(bonusBuyActive == true) {
