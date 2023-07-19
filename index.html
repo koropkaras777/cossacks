@@ -32,7 +32,7 @@
                                 <div class="betChange-button">
                                     <div class="bet-down" onclick="betDown()">-</div>
                                 </div>
-                                <div class="bet" id="bet">50</div>
+                                <div class="bet" id="bet">0.5₴</div>
                                 <div class="betChange-button">
                                     <div class="bet-up" onclick="betUp()">+</div>
                                 </div>
@@ -40,16 +40,16 @@
                         </div>
                     </div>
                     <div class="spin-area">
-                        <div class="spin-button" id="spinButton" onclick="spinWithSpinButton()"></div>
+                        <div class="spin-button" id="spinButton"></div> 
                     </div>
                     <div class="won-navigation">
                         <div class="balance">
                             <div class="balance-text">Баланс</div>
-                            <div class="balance-area" id="balance">100000</div>
+                            <div class="balance-area" id="balance">1000₴</div>
                         </div>
                         <div class="won">
                             <div class="won-text">Виграш</div>
-                            <div class="won-area" id="won">0</div>
+                            <div class="won-area" id="won">0.00₴</div>
                         </div>
                     </div>
                 </div>
@@ -318,8 +318,8 @@
                     <h3>Додаткова інформація</h3>
                     <div class="freeSpins-information">
                         <b>Теоретичний RTP в цій грі 98.61%.</b><br>
-                        <b>Мінімальна ставка: 10</b>
-                        <b>Максимальна ставка: 1000</b>
+                        <b id="minBet">Мінімальна ставка: 1₴</b>
+                        <b id="maxBet">Максимальна ставка: 100₴</b>
                     </div>
                     <div class="closeInformation">
                         <div class="closeButtonInformation" onclick="closeInformation()"></div>

@@ -1,12 +1,14 @@
-let bet = 50, balance = 100000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 1000000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), wonSound = new Audio('sound/wonSound.wav');
 let payArray = [], payArrayIndex = 0;
-let cancelled = false;
+let cancelled = false, timePressed;
 
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0, bigWinSoundEnd.volume = 0;
+
+let spinButton = document.querySelector('#spinButton');
 
 let payTable = [
     { symbol: 1, pay: [0, 0, 0.2, 0.5, 1.5] },
@@ -92,15 +94,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.body.onkeyup = (e) => {
-    if (e.key == " " ||
-        e.code == "Space" ||      
-        e.keyCode == 32) {
-            if(isLocked == false) {
-                spin();
-            }
-            
-            stopFunction();
+    if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+        if(isLocked == false) {
+            spin();
         }
+        
+        stopFunction();
+    }
+}
+
+document.body.onkeydown = (e) => {
+    if(e.key == " " || e.code == "Space" || e.keyCode == 32) {
+        setTimeout(() => {
+            if(isLocked == false) {
+                turboSpin();
+            }
+        }, 500)
+    }
 }
 
 let stopFunction = () => {
@@ -121,6 +131,17 @@ let closePreview = () => {
     slotMusic.play();
 }
 
+let drawMoneyValue = (element, value, additionalInformation) => {
+    let rounded = 100, currency = '₴'; //₴
+
+    if(additionalInformation) {
+        element.innerHTML = additionalInformation + ((value / rounded).toFixed(2) + currency);
+    } else {
+        element.innerHTML = (value / rounded).toFixed(2) + currency;
+    }
+    
+}
+
 let doublechache = () => {
     let doubleChancheButton = document.getElementById('doubleChancheButton');
     let totalbet;
@@ -133,7 +154,7 @@ let doublechache = () => {
         doubleChancheButton.style.color = 'rgb(194, 194, 0)';
         doubleChancheButton.style.borderColor = 'yellow';
 
-        betArea.innerHTML = totalbet;
+        drawMoneyValue(betArea, totalbet);
     } else {
         goldenBet = false;
         totalbet = bet;
@@ -141,7 +162,7 @@ let doublechache = () => {
         doubleChancheButton.style.color = 'black';
         doubleChancheButton.style.borderColor = 'red';
 
-        betArea.innerHTML = totalbet;
+        drawMoneyValue(betArea, totalbet);
     }
 }
 
@@ -150,12 +171,12 @@ let drawNumber = async (e, startValue, step, number, t) => {
         let interval = setInterval(() => {
             startValue = startValue + step;
     
-            e.innerHTML = startValue;
+            drawMoneyValue(e, startValue);
     
             if(cancelled) {
                 cancelled = false;
     
-                e.innerHTML = number;
+                drawMoneyValue(e, number);
                 clearInterval(interval);
                 resolve('end');
     
@@ -164,7 +185,7 @@ let drawNumber = async (e, startValue, step, number, t) => {
             }
     
             if (startValue >= number) {
-                e.innerHTML = number;
+                drawMoneyValue(e, number);
                 clearInterval(interval);
                 resolve('end');
             }
@@ -173,9 +194,15 @@ let drawNumber = async (e, startValue, step, number, t) => {
     })
 }
 
-let outputNumber = async (number, elementId) => {
+let outputNumber = async (number, elementId, isTurbo) => {
     let e = document.getElementById(elementId), startValue = 0, time = 8000, step = Math.round(number / 300);
     let t = Math.round(time / (number / step));
+
+    if(isTurbo) {
+        cancelled = true;
+    } else {
+        cancelled = false;
+    }
 
     let stop = await drawNumber(e, startValue, step, number, t);
 }
@@ -185,6 +212,7 @@ let updateGame = () => {
     checkBonusBuy();
 
     let totalbet;
+    let wonArea = document.getElementById('won');
     let betArea = document.getElementById('bet');
     let betAreaBB = document.getElementById('bet2');
     let balanceArea = document.getElementById('balance');
@@ -195,9 +223,10 @@ let updateGame = () => {
         totalbet = bet;
     }
 
-    betArea.innerHTML = totalbet;
-    betAreaBB.innerHTML = bet;
-    balanceArea.innerHTML = balance;
+    drawMoneyValue(wonArea, 0);
+    drawMoneyValue(betArea, totalbet);
+    drawMoneyValue(betAreaBB, bet);
+    drawMoneyValue(balanceArea, balance);
 }
 
 let musicSelected = () => {
@@ -258,10 +287,17 @@ let openInformation = () => {
             let paySymbolInformation = document.createElement('b');
 
             paySymbolInformation.id = 'symbolInfo' + j;
-            paySymbolInformation.innerHTML = j + ' - ' + (bet * payTable[i-1].pay[j-1]);
+            drawMoneyValue(paySymbolInformation, (bet * payTable[i-1].pay[j-1]), (j + ' - '));
             paySymbol.appendChild(paySymbolInformation);
         }
     }
+
+    let minBetBlock = document.querySelector('#minBet');
+    let maxBetBlock = document.querySelector('#maxBet');
+
+    drawMoneyValue(minBetBlock, 10, 'Мінімальна ставка: ');
+    drawMoneyValue(maxBetBlock, 10000, 'Максимальна ставка: ');
+
     let informationBoard = document.querySelector('#informationBoard');
     informationBoard.style.visibility = 'visible';
 }
@@ -280,7 +316,7 @@ let buy = (numOfSpins) => {
         let bonusBuyArea = document.querySelector("#bonusBuy");
         let balanceArea = document.getElementById('balance');
 
-        balanceArea.innerHTML = balance;
+        drawMoneyValue(balanceArea, balance);
         bonusBuyArea.style.visibility = 'hidden';
 
         spin();
@@ -293,7 +329,7 @@ let buy = (numOfSpins) => {
         let bonusBuyArea = document.querySelector("#bonusBuy");
         let balanceArea = document.getElementById('balance');
 
-        balanceArea.innerHTML = balance;
+        drawMoneyValue(balanceArea, balance);
         bonusBuyArea.style.visibility = 'hidden';
 
         spin();
@@ -306,7 +342,7 @@ let buy = (numOfSpins) => {
         let bonusBuyArea = document.querySelector("#bonusBuy");
         let balanceArea = document.getElementById('balance');
 
-        balanceArea.innerHTML = balance;
+        drawMoneyValue(balanceArea, balance);
         bonusBuyArea.style.visibility = 'hidden';
 
         spin();
@@ -319,7 +355,7 @@ let buy = (numOfSpins) => {
         let bonusBuyArea = document.querySelector("#bonusBuy");
         let balanceArea = document.getElementById('balance');
 
-        balanceArea.innerHTML = balance;
+        drawMoneyValue(balanceArea, balance);
         bonusBuyArea.style.visibility = 'hidden';
 
         spin();
@@ -332,10 +368,10 @@ let checkBonusBuy = () => {
     let bonusBuyPrice20 = document.querySelector("#bonusBuyPrice20");
     let bonusBuyPrice25 = document.querySelector("#bonusBuyPrice25");
 
-    bonusBuyPrice10.innerHTML = bet * 100;
-    bonusBuyPrice15.innerHTML = bet * 300;
-    bonusBuyPrice20.innerHTML = bet * 650;
-    bonusBuyPrice25.innerHTML = bet * 350;
+    drawMoneyValue(bonusBuyPrice10, (bet * 100));
+    drawMoneyValue(bonusBuyPrice15, (bet * 300));
+    drawMoneyValue(bonusBuyPrice20, (bet * 650));
+    drawMoneyValue(bonusBuyPrice25, (bet * 350));
 
     if(balance < bet * 100) {
         bonusBuyPrice10.style.color = 'red';
@@ -376,17 +412,17 @@ let closeBonusBuy = () => {
 
 let betUp = () => {
     if(!bonusGameStarted) {
-        if(bet < 1000) {
+        if(bet < 10000) {
             let betArea = document.querySelector('#bet');
             let betArea2 = document.querySelector('#bet2');
             let totalbet;
     
             if(bet < 100) {
                 bet += 10;
-            } else if(bet < 500) {
-                bet += 20;
-            } else if(bet >= 500) {
-                bet += 50;
+            } else if(bet < 1000) {
+                bet += 100;
+            } else if(bet >= 1000) {
+                bet += 1000;
             }
     
             if(goldenBet == true) {
@@ -395,8 +431,8 @@ let betUp = () => {
                 totalbet = bet;
             }
 
-            betArea.innerHTML = totalbet;
-            betArea2.innerHTML = bet;
+            drawMoneyValue(betArea, totalbet);
+            drawMoneyValue(betArea2, bet);
     
             checkBonusBuy();
         }
@@ -412,10 +448,10 @@ let betDown = () => {
 
             if(bet <= 100) {
                 bet -= 10;
-            } else if(bet <= 500) {
-                bet -= 20;
-            } else if(bet > 500) {
-                bet -= 50;
+            } else if(bet <= 1000) {
+                bet -= 100;
+            } else if(bet > 1000) {
+                bet -= 1000;
             }
 
             if(goldenBet == true) {
@@ -424,16 +460,20 @@ let betDown = () => {
                 totalbet = bet;
             }
 
-            betArea.innerHTML = totalbet;
-            betArea2.innerHTML = bet;
+            drawMoneyValue(betArea, totalbet);
+            drawMoneyValue(betArea2, bet);
 
             checkBonusBuy();
         }
     }
 }
 
-let drawPlayedLines = async () => {
-    cancelled = false;
+let drawPlayedLines = async (isTurbo) => {
+    if(isTurbo) {
+        cancelled = true;
+    } else {
+        cancelled = false;
+    }
 
     for(let i = 0; i < payLinesIndex; i++) {
         for(let j = 1; j < 6; j++) {
@@ -500,26 +540,81 @@ let hiddenSymbol = (symbol) => {
     symbol.style.visibility = 'hidden';
 }
 
-let drawSpin = async () => {
+let destroyGameAreaTurbo = async (payArray, scattersChecked) => {
+    return new Promise(async resolve => {
+        for(let i = 0; i < 3; i++) {
+            for(let j = 0; j < 5; j++) {
+                if(i == 0) {
+                    hiddenSymbol(document.getElementById(i+j));
+                    drawSymbol(document.getElementById(j+5), payArray, j, 0, scattersChecked);
+                    drawSymbol(document.getElementById(j+10), payArray, j, 1, scattersChecked);
+                } 
+                else if(i == 1) {
+                    hiddenSymbol(document.getElementById(j+5));
+                    drawSymbol(document.getElementById(j+10), payArray, j, 0, scattersChecked);
+                } 
+                else if(i == 2) {
+                    hiddenSymbol(document.getElementById(j+10));
+                }
+            }
+
+            await sleep(75);
+        }
+
+        resolve('end');
+    })
+}
+
+let drawGameAreaTurbo = async (payArray, scattersChecked, timeOfDraw) => {
+    return new Promise(async resolve => {
+        for(let i = 0; i < 3; i++) {
+            for(let j = 0; j < 5; j++) {
+                if(i == 0) {
+                    drawSymbol(document.getElementById(j), payArray, j, 10, scattersChecked);
+                } 
+                else if(i == 1) {
+                    drawSymbol(document.getElementById(j), payArray, j, 5, scattersChecked);
+                    drawSymbol(document.getElementById(j+5), payArray, j, 10, scattersChecked);
+                } 
+                else if(i == 2) {
+                    drawSymbol(document.getElementById(j), payArray, j, 0, scattersChecked);
+                    drawSymbol(document.getElementById(j+5), payArray, j, 5, scattersChecked);
+                    drawSymbol(document.getElementById(j+10), payArray, j, 10, scattersChecked);
+                }
+            }
+
+            await sleep(75);
+        }
+
+        spinSound.play();
+        resolve('end');
+    })
+}
+
+let drawSpin = async (isTurbo) => {
     let scattersChecked = 0;
 
     try {
-        for(let i = 0; i < 5; i++) {
-            let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
-
-            for(let j = 0; j < 3; j++) {
-                if(j == 0) {
-                    hiddenSymbol(firstPoint);
-                    drawSymbol(secondPoint, payArray, i, 0, scattersChecked);
-                    drawSymbol(thirdPoint, payArray, i, 5, scattersChecked);
-                } else if(j == 1) {
-                    hiddenSymbol(secondPoint);
-                    drawSymbol(thirdPoint, payArray, i, 0, scattersChecked);
-                } else if(j == 2) {
-                    hiddenSymbol(thirdPoint);
+        if(isTurbo) {
+            let result = await destroyGameAreaTurbo(payArray, scattersChecked);
+        } else {
+            for(let i = 0; i < 5; i++) {
+                let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
+    
+                for(let j = 0; j < 3; j++) {
+                    if(j == 0) {
+                        hiddenSymbol(firstPoint);
+                        drawSymbol(secondPoint, payArray, i, 0, scattersChecked);
+                        drawSymbol(thirdPoint, payArray, i, 5, scattersChecked);
+                    } else if(j == 1) {
+                        hiddenSymbol(secondPoint);
+                        drawSymbol(thirdPoint, payArray, i, 0, scattersChecked);
+                    } else if(j == 2) {
+                        hiddenSymbol(thirdPoint);
+                    }
+    
+                    await sleep(75);
                 }
-
-                await sleep(75);
             }
         }
     } catch {
@@ -536,18 +631,11 @@ let drawSpin = async () => {
 
     scattersChecked = 0;
 
-    for(let i = 0; i < 5; i++) {
-        let gameareaCol = document.getElementById('gameareaCol' + i);
-        let positionTop = -170;
-        let timeOfDraw;
+    if(firstDraw) {
+        for(let i = 0; i < 5; i++) {
+            let gameareaCol = document.getElementById('gameareaCol' + i);
+            let positionTop = -170;
 
-        if(scattersChecked >= 2) {
-            timeOfDraw = 500;
-        } else {
-            timeOfDraw = 75;
-        }
-
-        if(firstDraw) {
             for(let j = 0; j < 11; j += 5) {
                 let point = document.createElement('div');
 
@@ -559,40 +647,102 @@ let drawSpin = async () => {
 
                 gameareaCol.appendChild(point);
                 point.style.visibility = 'visible';
-
-                await sleep(timeOfDraw);
             }
 
             if(i+10 == 14) {
                 firstDraw = false;
             }
+        }
+    } else {
+        if(isTurbo) {
+            let result = await drawGameAreaTurbo(payArray, scattersChecked);
+
+            await sleep(501);
         } else {
-            let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
-
-            for(let j = 0; j < 3; j++) {
-                if(j == 0) {
-                    drawSymbol(firstPoint, payArray, i, 10, scattersChecked);
-                } else if(j == 1) {
-                    drawSymbol(firstPoint, payArray, i, 5, scattersChecked);
-                    drawSymbol(secondPoint, payArray, i, 10, scattersChecked);
-                } else if(j == 2) {
-                    drawSymbol(firstPoint, payArray, i, 0, scattersChecked);
-                    drawSymbol(secondPoint, payArray, i, 5, scattersChecked);
-                    drawSymbol(thirdPoint, payArray, i, 10, scattersChecked);
+            for(let i = 0; i < 5; i++) {
+                let timeOfDraw;
+        
+                if(scattersChecked >= 2) {
+                    timeOfDraw = 500;
+                } else {
+                    timeOfDraw = 75;
                 }
-
-                await sleep(timeOfDraw);
+                
+                let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
+    
+                for(let j = 0; j < 3; j++) {
+                    if(j == 0) {
+                        drawSymbol(firstPoint, payArray, i, 10, scattersChecked);
+                    } else if(j == 1) {
+                        drawSymbol(firstPoint, payArray, i, 5, scattersChecked);
+                        drawSymbol(secondPoint, payArray, i, 10, scattersChecked);
+                    } else if(j == 2) {
+                        drawSymbol(firstPoint, payArray, i, 0, scattersChecked);
+                        drawSymbol(secondPoint, payArray, i, 5, scattersChecked);
+                        drawSymbol(thirdPoint, payArray, i, 10, scattersChecked);
+                    }
+    
+                    await sleep(timeOfDraw);
+                }
+        
+                spinSound.play();
             }
         }
-
-        spinSound.play();
     }
 }
 
-let spinWithSpinButton = () => {
+let continueSpin = true;
+
+spinButton.addEventListener('mouseleave', () => {
+    continueSpin = false;
+})
+
+spinButton.addEventListener('pointerleave', () => {
+    continueSpin = false;
+})
+
+spinButton.addEventListener('pointerup', () => {
+    continueSpin = false;
+
+    spinWithButton();
+})
+
+spinButton.addEventListener('mouseup', () => {
+    continueSpin = false;
+
+    spinWithButton();
+})
+
+spinButton.addEventListener('mousedown', () => {
+    turboSpinWithButton();
+})
+
+spinButton.addEventListener('pointerdown', () => {
+    turboSpinWithButton();
+})
+
+let spinWithButton = () => {
     if(isLocked == false) {
         spin();
     }
+}
+
+let turboSpinWithButton = () => {
+    setTimeout(() => {
+        if(isLocked == false) {
+            continueSpin = true;
+            
+            let spinDelay = async () => {
+                await turboSpin();
+
+                if(continueSpin) {
+                    setTimeout(spinDelay, 1);
+                }
+            }
+
+            spinDelay();
+        }
+    }, 500)
 }
 
 let continueGame = () => {
@@ -608,7 +758,7 @@ let continueStandartGame = () => {
     let bonusBackground = document.querySelector('body');
     bonusGameEnded.style.visibility = "hidden";
     balance += bonusGameWon;
-    balanceArea.innerHTML = balance;
+    drawMoneyValue(balanceArea, balance);
 
     checkBonusBuy();
     bonusGameWon = 0;
@@ -618,6 +768,93 @@ let continueStandartGame = () => {
     slotMusic.play();
 
     isLocked == false;
+}
+
+let turboSpin = async () => {
+    isLocked = true;
+
+    let bigWinBoard = document.querySelector('#bigWinBoard');
+    let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
+    let bigWinBoardText = document.querySelector('#bigWinBoardText');
+    let balanceArea = document.getElementById('balance');
+    let spinButton = document.getElementById('spinButton');
+
+    bigWinBoard.style.visibility = "hidden";
+    spinButton.classList.add('spinButtonActive');
+
+    touchSound.play();
+    
+    let substractBalance;
+
+    if(goldenBet == true) {
+        substractBalance = bet + bet / 2;
+    } else {
+        substractBalance = bet;
+    }
+
+    if(balance >= substractBalance) {
+        balance -= substractBalance;
+        drawMoneyValue(balanceArea, balance);
+
+        checkBonusBuy();
+        playSpin();
+        await drawSpin(true);
+
+        let wonArea = document.querySelector('#won');
+
+        if(wonForSpin > 0) {
+            if(wonForSpin/bet >= 30) {
+                slotMusic.pause();
+                bigWinSoundStart.play();
+                await sleep(2000);
+
+                bigWinSound.play();
+                bigWinSound.currentTime = 0;
+                drawMoneyValue(bigWinBoardValue, wonForSpin);
+                bigWinBoard.style.visibility = "visible";
+
+                if(wonForSpin/bet >= 30 && wonForSpin/bet < 50) { bigWinBoardText.innerHTML = "Великий виграш!"; }
+                if(wonForSpin/bet >= 50 && wonForSpin/bet < 100) { bigWinBoardText.innerHTML = "Супер великий виграш!"; }
+                if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
+                if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
+
+                await outputNumber(wonForSpin, 'bigWinBoardValue', true);
+                await sleep(1000);
+
+                bigWinBoard.style.visibility = "hidden";
+                slotMusic.play();
+            }
+
+            wonSound.play();
+
+            balance += wonForSpin;
+            drawMoneyValue(wonArea, wonForSpin);
+            drawMoneyValue(balanceArea, balance);
+            wonForSpin = 0;
+        }
+
+        if(payLinesIndex > 0) {
+            await drawPlayedLines(true);
+        }
+
+        spinButton.classList.remove('spinButtonActive');
+
+        if(bonusGameStarted == true) {
+            let bonusArea = document.querySelector('#bonusGameBoard');
+            let bonusGameBoardValue = document.querySelector('#bonusGameBoardValue');
+
+            slotMusic.pause();
+            bonusMusicStart.play();
+            bonusMusicStart.currentTime = 0;
+
+            bonusGameBoardValue.innerHTML = "Ви виграли " + bonusGameSpins + " безкоштовних обертань";
+            bonusArea.style.visibility = "visible";
+        } 
+
+        if(bonusGameStarted == false && wonForSpin/bet < 30) {
+            isLocked = false;
+        }
+    } 
 }
 
 let spin = async () => {
@@ -644,11 +881,11 @@ let spin = async () => {
 
     if(balance >= substractBalance) {
         balance -= substractBalance;
-        balanceArea.innerHTML = balance;
+        drawMoneyValue(balanceArea, balance);
 
         checkBonusBuy();
         playSpin();
-        await drawSpin();
+        await drawSpin(false);
 
         let wonArea = document.querySelector('#won');
 
@@ -660,7 +897,7 @@ let spin = async () => {
 
                 bigWinSound.play();
                 bigWinSound.currentTime = 0;
-                bigWinBoardValue.innerHTML = wonForSpin;
+                drawMoneyValue(bigWinBoardValue, wonForSpin);
                 bigWinBoard.style.visibility = "visible";
 
                 if(wonForSpin/bet >= 30 && wonForSpin/bet < 50) { bigWinBoardText.innerHTML = "Великий виграш!"; }
@@ -668,7 +905,7 @@ let spin = async () => {
                 if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
                 if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
 
-                await outputNumber(wonForSpin, 'bigWinBoardValue');
+                await outputNumber(wonForSpin, 'bigWinBoardValue', false);
                 await sleep(1000);
 
                 bigWinBoard.style.visibility = "hidden";
@@ -678,13 +915,13 @@ let spin = async () => {
             wonSound.play();
 
             balance += wonForSpin;
-            wonArea.innerHTML = wonForSpin;
-            balanceArea.innerHTML = balance;
+            drawMoneyValue(wonArea, wonForSpin);
+            drawMoneyValue(balanceArea, balance);
             wonForSpin = 0;
         }
 
         if(payLinesIndex > 0) {
-            await drawPlayedLines();
+            await drawPlayedLines(false);
         }
 
         spinButton.classList.remove('spinButtonActive');
@@ -715,7 +952,7 @@ let playBonusSpin = async () => {
     bigWinBoard.style.visibility = "hidden";
 
     playSpin();
-    await drawSpin();
+    await drawSpin(false);
 
     if(wonForSpin > 0) {
         if(wonForSpin/bet >= 30) {
@@ -725,7 +962,7 @@ let playBonusSpin = async () => {
 
             bigWinSound.play();
             bigWinSound.currentTime = 0;
-            bigWinBoardValue.innerHTML = wonForSpin;
+            drawMoneyValue(bigWinBoardValue, wonForSpin);
             bigWinBoard.style.visibility = "visible";
 
             if(wonForSpin/bet >= 30 && wonForSpin/bet < 50) { bigWinBoardText.innerHTML = "Великий виграш!"; }
@@ -733,7 +970,7 @@ let playBonusSpin = async () => {
             if(wonForSpin/bet >= 100 && wonForSpin/bet < 200) { bigWinBoardText.innerHTML = "Мега великий виграш!"; }
             if(wonForSpin/bet >= 200) { bigWinBoardText.innerHTML = "Грандіозний виграш!"; }
 
-            await outputNumber(wonForSpin, 'bigWinBoardValue');
+            await outputNumber(wonForSpin, 'bigWinBoardValue', false);
             await sleep(1500);
 
             bigWinBoard.style.visibility = "hidden";
@@ -745,10 +982,10 @@ let playBonusSpin = async () => {
         wonForSpin = 0;
     }
     
-    wonArea.innerHTML = bonusGameWon;
+    drawMoneyValue(wonArea, bonusGameWon);
 
     if(payLinesIndex > 0) {
-        await drawPlayedLines();
+        await drawPlayedLines(false);
     }
 
     await sleep(1000);
@@ -795,7 +1032,7 @@ let generateSymbol = (symbol) => {
 }
 
 let generateWilds = () => {
-    let chance = getRandomInt(2410); //3010
+    let chance = getRandomInt(2410); //3010 //2410
 
     if(chance >= 1 && chance <= 695) {
         let generatedWild, wild = getRandomInt(3);
@@ -1003,7 +1240,8 @@ let playBonuseGame = async () => {
     }
 
     freespinsArea.style.visibility = "hidden";
-    bonusGameEndedBoardValue.innerHTML = 'Ви виграли ' + bonusGameWon + ' в ' + bonusGameSpins + ' безкоштовних обертаннях';
+    drawMoneyValue(bonusGameEndedBoardValue, bonusGameWon, 'Ви виграли ');
+    bonusGameEndedBoardValue.innerHTML += ' в ' + bonusGameSpins + ' безкоштовних обертаннях';
     bonusGameEnded.style.visibility = "visible";
 
     bonusGameStarted = false;
