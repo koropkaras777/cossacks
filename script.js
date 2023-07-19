@@ -772,7 +772,7 @@ let turboSpin = async () => {
     if(bonusGameStarted) {
         return;
     }
-    
+
     isLocked = true;
 
     let bigWinBoard = document.querySelector('#bigWinBoard');
@@ -1095,7 +1095,7 @@ let generateBonusGame = () => {
     if(goldenBet == true) {
         bonusChance = 115;
     } else {
-        bonusChance = 50;
+        bonusChance = 173;
     }
 
     if(bonusBuyActive == true) {
