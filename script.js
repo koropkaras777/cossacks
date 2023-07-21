@@ -1,4 +1,4 @@
-let bet = 50, balance = 1000000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 1000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
@@ -129,6 +129,13 @@ let closePreview = () => {
     musicSelected();
     
     slotMusic.play();
+}
+
+let closeValueWarning = () => {
+    let valueWarningBlock = document.querySelector('#valueWarning');
+    valueWarningBlock.style.visibility = 'hidden';
+
+    isLocked = false;
 }
 
 let drawMoneyValue = (element, value, additionalInformation) => {
@@ -583,7 +590,9 @@ let drawGameAreaTurbo = async (payArray, scattersChecked, timeOfDraw) => {
                 }
             }
 
-            await sleep(75);
+            // if(!cancelled) {
+            //     await sleep(75);
+            // }
         }
 
         spinSound.play();
@@ -659,6 +668,8 @@ let drawSpin = async (isTurbo) => {
 
             await sleep(501);
         } else {
+            cancelled = false;
+            
             for(let i = 0; i < 5; i++) {
                 let timeOfDraw;
         
@@ -671,6 +682,13 @@ let drawSpin = async (isTurbo) => {
                 let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
     
                 for(let j = 0; j < 3; j++) {
+                    // if(cancelled) {
+                    //     let result = await drawGameAreaTurbo(payArray, scattersChecked);
+                    //     await sleep(501);
+
+                    //     return;
+                    // }
+
                     if(j == 0) {
                         drawSymbol(firstPoint, payArray, i, 10, scattersChecked);
                     } else if(j == 1) {
@@ -740,7 +758,7 @@ let turboSpinWithButton = () => {
 
             spinDelay();
         }
-    }, 500)
+    }, 750)
 }
 
 let continueGame = () => {
@@ -856,11 +874,18 @@ let turboSpin = async () => {
         if(bonusGameStarted == false && wonForSpin/bet < 30) {
             isLocked = false;
         }
-    } 
+    } else {
+        let valueWarningBlock = document.querySelector('#valueWarning');
+
+        continueSpin = false;
+        valueWarningBlock.style.visibility = 'visible';
+        spinButton.classList.remove('spinButtonActive');
+    }
 }
 
 let spin = async () => {
     isLocked = true;
+    continueSpin = false;
 
     let bigWinBoard = document.querySelector('#bigWinBoard');
     let bigWinBoardValue = document.querySelector('#bigWinBoardValue');
@@ -943,7 +968,12 @@ let spin = async () => {
         if(bonusGameStarted == false && wonForSpin/bet < 30) {
             isLocked = false;
         }
-    } 
+    } else {
+        let valueWarningBlock = document.querySelector('#valueWarning');
+
+        valueWarningBlock.style.visibility = 'visible';
+        spinButton.classList.remove('spinButtonActive');
+    }
 }
 
 let playBonusSpin = async () => {
@@ -952,6 +982,7 @@ let playBonusSpin = async () => {
     let bigWinBoardText = document.querySelector('#bigWinBoardText');
     let wonArea = document.querySelector('#won');
     bigWinBoard.style.visibility = "hidden";
+    continueSpin = false;
 
     playSpin();
     await drawSpin(false);
