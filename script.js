@@ -1,4 +1,4 @@
-let bet = 50, balance = 1000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 10000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
