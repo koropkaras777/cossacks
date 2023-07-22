@@ -5,7 +5,7 @@
         <meta name="viewport" content="user-scalable=no">
         <link rel="stylesheet" href="style.css">
     </head>
-    <body>
+    <body onclick="stopFunction()">
         <div class="preview" id="previewContainer">
             <div class="preview-container" onclick="closePreview()">
                 <img class="previewImage" src="images/preview.png"/>
@@ -13,7 +13,7 @@
             </div>
             <div class="preview-background"></div>
         </div>
-        <div class="game-container" id="gameContainer" onclick="stopFunction()">
+        <div class="game-container" id="gameContainer">
             <div class="game">
                 <div class="game-area" id="area">
                     <div class="gamearea-col" id="gameareaCol0"></div>
@@ -44,7 +44,7 @@
                             <div class="spin-replay" id="spinReplay"></div>
                         </div>
                         <div class="spin-button-block">
-                            <div class="spin-button" id="spinButton" onclick="stopAutospins()">
+                            <div class="spin-button" id="spinButton" onclick="stopAutoSpins()">
                                 <h1 id="numberOfSpins">10</h1>
                             </div> 
                         </div>

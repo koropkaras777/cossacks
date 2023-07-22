@@ -95,11 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.body.onkeyup = (e) => {
     if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+        stopAutoSpins();
+
         if(isLocked == false) {
             spin();
         }
         
-        cancelledAutoSpins = true;
         stopFunction();
     }
 }
@@ -107,7 +108,7 @@ document.body.onkeyup = (e) => {
 document.body.onkeydown = (e) => {
     if(e.key == " " || e.code == "Space" || e.keyCode == 32) {
         setTimeout(() => {
-            cancelledAutoSpins = true;
+            stopAutoSpins();
 
             if(isLocked == false) {
                 turboSpin();
@@ -423,7 +424,7 @@ let openAutoSpinNavigation = () => {
     }
 
     if(cancelledAutoSpins == false) {
-        cancelledAutoSpins = true;
+        stopAutoSpins();
 
         return;
     }
@@ -431,10 +432,6 @@ let openAutoSpinNavigation = () => {
     let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
 
     autoSpinsBoard.style.visibility = 'visible';
-}
-
-let stopAutospins = () => {
-    cancelledAutoSpins = true;
 }
 
 const numberOfAutoSpinsValue = document.querySelector("#numberOfAutoSpinsValue");
@@ -459,17 +456,25 @@ let startAutoSpins = async () => {
 
     for(let i = autoSpins; i > 0; i--) {
         if(cancelledAutoSpins || bonusGameStarted) {
-            autoSpinsNumber.style.visibility = 'hidden';
+            stopAutoSpins();
 
             return;
         }
-
 
         autoSpins--;
         autoSpinsNumber.innerHTML = autoSpins;
 
         await spin();
     }
+
+    stopAutoSpins();
+}
+
+let stopAutoSpins = () => {
+    let autoSpinsNumber = document.querySelector('#numberOfSpins');
+    autoSpinsNumber.style.visibility = 'hidden';
+
+    cancelledAutoSpins = true;
 }
 
 let closeAutoSpins = () => {
@@ -964,7 +969,8 @@ let turboSpin = async () => {
             isLocked = false;
         }
     } else {
-        cancelledAutoSpins = true;
+        stopAutoSpins();
+
         let valueWarningBlock = document.querySelector('#valueWarning');
 
         continueSpin = false;
@@ -1059,7 +1065,7 @@ let spin = async () => {
             isLocked = false;
         }
     } else {
-        cancelledAutoSpins = true;
+        stopAutoSpins();
 
         let valueWarningBlock = document.querySelector('#valueWarning');
 
