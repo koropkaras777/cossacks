@@ -40,7 +40,19 @@
                         </div>
                     </div>
                     <div class="spin-area">
-                        <div class="spin-button" id="spinButton"></div> 
+                        <div class="spin-replay-block" onclick="openAutoSpinNavigation()">
+                            <div class="spin-replay" id="spinReplay"></div>
+                        </div>
+                        <div class="spin-button-block">
+                            <div class="spin-button" id="spinButton" onclick="stopAutospins()">
+                                <h1 id="numberOfSpins">10</h1>
+                            </div> 
+                        </div>
+                        <div class="maxBet-button-block">
+                            <div class="maxBet-button" id="maxBetButton" onclick="maxBet()">
+                                MAX<br>BET
+                            </div>
+                        </div>
                     </div>
                     <div class="won-navigation">
                         <div class="balance">
@@ -67,6 +79,30 @@
                     </div>
                     <div class="middleBoxButton">
                         <div class="info-button" onclick="openInformation()" id="openInfoButton"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="autoSpins-navigation" id="autoSpinsBoard">
+                <div class="autoSpins-background"></div>
+                <div class="autoSpins-block">
+                    <div class="closeAutoSpins-block">
+                        <div class="closeAutoSpins" onclick="closeAutoSpins()"></div>
+                    </div>
+                    <div class="autoSpins-settings">
+                        <h2>Кількість автоспінів</h2>
+                        <div class="autoSpinsRange">
+                            <input type="range" id="numberOfAutoSpinsInput" name="numberOfAutoSpins" min="10" max="500" value="50", step="5">
+                            <div class="autoSpinsRangeValue">
+                                <h2><output id="numberOfAutoSpinsValue"></output></h2>
+                            </div>
+                        </div>
+                        <!-- <div class="turboSpinsNavigation">
+                            <input type="checkbox" id="isTurboSpin" name="isTurboSpin">
+                            <h2><label for="isTurboSpin">Швидкі обертання</label></h2>
+                        </div> -->
+                        <div class="autoSpins-button-area">
+                            <div class="autoSpins-card-button" onclick="startAutoSpins()">Розпочати</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,10 @@
-let bet = 50, balance = 10000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
+let bet = 50, balance = 1000000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
 let payLines = [], payLinesIndex = 0;
 let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
 let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), wonSound = new Audio('sound/wonSound.wav');
 let payArray = [], payArrayIndex = 0;
-let cancelled = false, timePressed, continueSpin = true;
+let cancelled = false, timePressed, continueSpin = true, cancelledAutoSpins = true;
 
 slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0, bigWinSoundEnd.volume = 0;
 
@@ -99,6 +99,7 @@ document.body.onkeyup = (e) => {
             spin();
         }
         
+        cancelledAutoSpins = true;
         stopFunction();
     }
 }
@@ -106,6 +107,8 @@ document.body.onkeyup = (e) => {
 document.body.onkeydown = (e) => {
     if(e.key == " " || e.code == "Space" || e.keyCode == 32) {
         setTimeout(() => {
+            cancelledAutoSpins = true;
+
             if(isLocked == false) {
                 turboSpin();
             }
@@ -150,6 +153,10 @@ let drawMoneyValue = (element, value, additionalInformation) => {
 }
 
 let doublechache = () => {
+    if(bonusGameStarted) {
+        return;
+    }
+
     let doubleChancheButton = document.getElementById('doubleChancheButton');
     let totalbet;
     let betArea = document.getElementById('bet');
@@ -410,6 +417,67 @@ let bonusBuy = () => {
     }
 }
 
+let openAutoSpinNavigation = () => {
+    if(bonusGameStarted) {
+        return;
+    }
+
+    if(cancelledAutoSpins == false) {
+        cancelledAutoSpins = true;
+
+        return;
+    }
+ 
+    let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
+
+    autoSpinsBoard.style.visibility = 'visible';
+}
+
+let stopAutospins = () => {
+    cancelledAutoSpins = true;
+}
+
+const numberOfAutoSpinsValue = document.querySelector("#numberOfAutoSpinsValue");
+const numberOfAutoSpinsInput = document.querySelector("#numberOfAutoSpinsInput");
+
+numberOfAutoSpinsValue.textContent = numberOfAutoSpinsInput.value;
+
+numberOfAutoSpinsInput.addEventListener("input", (event) => {
+    numberOfAutoSpinsValue.textContent = event.target.value;
+});
+
+let startAutoSpins = async () => {
+    let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
+    let autoSpinsNumber = document.querySelector('#numberOfSpins');
+
+    let autoSpins = numberOfAutoSpinsInput.value;
+    autoSpinsNumber.innerHTML = autoSpins;
+    autoSpinsNumber.style.visibility = 'visible';
+
+    autoSpinsBoard.style.visibility = 'hidden';
+    cancelledAutoSpins = false;
+
+    for(let i = autoSpins; i > 0; i--) {
+        if(cancelledAutoSpins || bonusGameStarted) {
+            autoSpinsNumber.style.visibility = 'hidden';
+
+            return;
+        }
+
+
+        autoSpins--;
+        autoSpinsNumber.innerHTML = autoSpins;
+
+        await spin();
+    }
+}
+
+let closeAutoSpins = () => {
+    let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
+
+    autoSpinsBoard.style.visibility = 'hidden';
+}
+
 let closeBonusBuy = () => {
     isLocked = false;
 
@@ -472,6 +540,27 @@ let betDown = () => {
 
             checkBonusBuy();
         }
+    }
+}
+
+let maxBet = () => {
+    if(!bonusGameStarted) {
+        let betArea = document.querySelector('#bet');
+        let betArea2 = document.querySelector('#bet2');
+        let totalbet;
+
+        bet = 10000;
+
+        if(goldenBet == true) {
+            totalbet = bet + bet / 2;
+        } else {
+            totalbet = bet;
+        }
+
+        drawMoneyValue(betArea, totalbet);
+        drawMoneyValue(betArea2, bet);
+
+        checkBonusBuy();
     }
 }
 
@@ -875,6 +964,7 @@ let turboSpin = async () => {
             isLocked = false;
         }
     } else {
+        cancelledAutoSpins = true;
         let valueWarningBlock = document.querySelector('#valueWarning');
 
         continueSpin = false;
@@ -969,6 +1059,8 @@ let spin = async () => {
             isLocked = false;
         }
     } else {
+        cancelledAutoSpins = true;
+
         let valueWarningBlock = document.querySelector('#valueWarning');
 
         valueWarningBlock.style.visibility = 'visible';
