@@ -1,12 +1,31 @@
 let bet = 50, balance = 1000000, startDraw = true, wonForSpin = 0, bonusGameStarted = false, bonusGameStartedTrigger = true, bonusGameSpins, bonusGameWon = 0, wildMemory = [], wildMemoryItems = 0;
 let gameArea = Array(3).fill().map(() => Array(5).fill(0));
-let payLines = [], payLinesIndex = 0;
-let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true;
-let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), bonusMusic = new Audio('sound/Нечиста сила.mp3'), bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), spinSound = new Audio('sound/spin2.mp3'), touchSound = new Audio('sound/touch.mp3'), bigWinSound = new Audio('sound/bigWinMusic.mp3'), bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), wonSound = new Audio('sound/wonSound.wav');
-let payArray = [], payArrayIndex = 0;
-let cancelled = false, timePressed, continueSpin = true, cancelledAutoSpins = true;
+let payLines = [], payLinesIndex = 0, payArray = [], payArrayIndex = 0;
+let isLocked = false, bonusBuyActive = false, bonusBuySpins, isMusic = true, goldenBet = false, firstDraw = true, cancelled = false, timePressed, continueSpin = true, cancelledAutoSpins = true;
 
-slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, bonusMusic.volume = 0, spinSound.volume = 0, bonusMusicStart.volume = 0, bigWinSound.volume = 0, bigWinSoundStart.volume = 0, wonSound.volume = 0, touchSound.volume = 0, bigWinSoundEnd.volume = 0;
+let slotMusic = new Audio('sound/Як козаки інопланетян зустрічали.mp3'), 
+    bonusMusic = new Audio('sound/Нечиста сила.mp3'), 
+    bonusMusicStart = new Audio('sound/bonusMusicStart.mp3'), 
+    spinSound = new Audio('sound/spin2.mp3'), 
+    touchSound = new Audio('sound/touch.mp3'), 
+    bigWinSound = new Audio('sound/bigWinMusic.mp3'), 
+    bigWinSoundStart = new Audio('sound/bigWinPreload.mp3'), 
+    bigWinSoundEnd = new Audio('sound/bigWinEnd.mp3'), 
+    wonSound = new Audio('sound/wonSound.wav'), 
+    clickSound = new Audio('sound/click.mp3'), 
+    doubleChanceSound = new Audio('sound/doublechance.mp3');
+
+slotMusic.loop = "true", bonusMusic.loop = "true", slotMusic.volume = 0, 
+                                                    bonusMusic.volume = 0, 
+                                                    spinSound.volume = 0, 
+                                                    bonusMusicStart.volume = 0, 
+                                                    bigWinSound.volume = 0, 
+                                                    bigWinSoundStart.volume = 0, 
+                                                    wonSound.volume = 0, 
+                                                    touchSound.volume = 0, 
+                                                    bigWinSoundEnd.volume = 0, 
+                                                    clickSound.volume = 0, 
+                                                    doubleChanceSound.volume = 0;
 
 let spinButton = document.querySelector('#spinButton');
 
@@ -97,11 +116,11 @@ document.body.onkeyup = (e) => {
     if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
         stopAutoSpins();
 
+        stopFunction();
+
         if(isLocked == false) {
             spin();
         }
-        
-        stopFunction();
     }
 }
 
@@ -136,6 +155,8 @@ let closePreview = () => {
 }
 
 let closeValueWarning = () => {
+    clickSound.play();
+
     let valueWarningBlock = document.querySelector('#valueWarning');
     valueWarningBlock.style.visibility = 'hidden';
 
@@ -143,18 +164,19 @@ let closeValueWarning = () => {
 }
 
 let drawMoneyValue = (element, value, additionalInformation) => {
-    let rounded = 100, currency = '₴'; //₴
+    let rounded = 100, currency = 'UAH'; //₴
 
     if(additionalInformation) {
-        element.innerHTML = additionalInformation + ((value / rounded).toFixed(2) + currency);
+        element.innerHTML = additionalInformation + (new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(value / rounded));
     } else {
-        element.innerHTML = (value / rounded).toFixed(2) + currency;
+        element.innerHTML = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(value / rounded);
     }
-    
 }
 
 let doublechache = () => {
     if(bonusGameStarted) {
+        clickSound.play();
+
         return;
     }
 
@@ -170,6 +192,7 @@ let doublechache = () => {
         doubleChancheButton.style.borderColor = 'yellow';
 
         drawMoneyValue(betArea, totalbet);
+        doubleChanceSound.play();
     } else {
         goldenBet = false;
         totalbet = bet;
@@ -178,6 +201,7 @@ let doublechache = () => {
         doubleChancheButton.style.borderColor = 'red';
 
         drawMoneyValue(betArea, totalbet);
+        clickSound.play();
     }
 }
 
@@ -245,18 +269,22 @@ let updateGame = () => {
 }
 
 let musicSelected = () => {
+    clickSound.play();
+
     let musicButton = document.querySelector('#musicButton');
 
     if(isMusic) {
-        slotMusic.volume = 1;
-        bonusMusic.volume = 1;
+        slotMusic.volume = 0.5;
+        bonusMusic.volume = 0.5;
         spinSound.volume = 1;
-        bonusMusicStart.volume = 1;
-        bigWinSound.volume = 1;
-        bigWinSoundStart.volume = 1;
+        bonusMusicStart.volume = 0.5;
+        bigWinSound.volume = 0.5;
+        bigWinSoundStart.volume = 0.5;
         wonSound.volume = 1;
         touchSound.volume = 1;
-        bigWinSoundEnd.volume = 1;
+        bigWinSoundEnd.volume = 0.5;
+        clickSound.volume = 1;
+        doubleChanceSound.volume = 1;
 
         musicButton.style.border = '2px solid green';
 
@@ -271,6 +299,8 @@ let musicSelected = () => {
         wonSound.volume = 0;
         touchSound.volume = 0;
         bigWinSoundEnd.volume = 0;
+        clickSound.volume = 0;
+        doubleChanceSound.volume = 0;
 
         musicButton.style.border = '2px solid red';
 
@@ -279,6 +309,8 @@ let musicSelected = () => {
 }
 
 let openInformation = () => {
+    clickSound.play();
+    
     try {
         for(let i = 1; i <= 10; i++) {
             let payId = 'pay' + i;
@@ -318,11 +350,15 @@ let openInformation = () => {
 }
 
 let closeInformation = () => {
+    clickSound.play();
+
     let informationBoard = document.querySelector('#informationBoard');
     informationBoard.style.visibility = 'hidden';
 } 
 
 let buy = (numOfSpins) => {
+    clickSound.play();
+
     if(numOfSpins == 10 && balance >= bet * 100) {
         balance -= bet * 99;
         bonusBuySpins = 3;
@@ -411,6 +447,8 @@ let checkBonusBuy = () => {
 }
 
 let bonusBuy = () => {
+    clickSound.play();
+
     if(!bonusGameStarted) {
         isLocked = true;
         let bonusBuyArea = document.querySelector("#bonusBuy");
@@ -419,6 +457,8 @@ let bonusBuy = () => {
 }
 
 let openAutoSpinNavigation = () => {
+    clickSound.play();
+
     if(bonusGameStarted) {
         return;
     }
@@ -444,7 +484,10 @@ numberOfAutoSpinsInput.addEventListener("input", (event) => {
 });
 
 let startAutoSpins = async () => {
+    clickSound.play();
+
     let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
+    let isTurboSpins = document.querySelector('#isTurboSpin');
     let autoSpinsNumber = document.querySelector('#numberOfSpins');
 
     let autoSpins = numberOfAutoSpinsInput.value;
@@ -464,7 +507,11 @@ let startAutoSpins = async () => {
         autoSpins--;
         autoSpinsNumber.innerHTML = autoSpins;
 
-        await spin();
+        if(isTurboSpins.checked == true) {
+            await turboSpin();
+        } else {
+            await spin();
+        }
     }
 
     stopAutoSpins();
@@ -478,12 +525,16 @@ let stopAutoSpins = () => {
 }
 
 let closeAutoSpins = () => {
+    clickSound.play();
+
     let autoSpinsBoard = document.querySelector('#autoSpinsBoard');
 
     autoSpinsBoard.style.visibility = 'hidden';
 }
 
 let closeBonusBuy = () => {
+    clickSound.play();
+
     isLocked = false;
 
     let bonusBuyArea = document.querySelector("#bonusBuy");
@@ -491,6 +542,8 @@ let closeBonusBuy = () => {
 }
 
 let betUp = () => {
+    clickSound.play();
+
     if(!bonusGameStarted) {
         if(bet < 10000) {
             let betArea = document.querySelector('#bet');
@@ -520,6 +573,8 @@ let betUp = () => {
 }
 
 let betDown = () => {
+    clickSound.play();
+
     if(!bonusGameStarted) {
         if(bet > 10) {
             let betArea = document.querySelector('#bet');
@@ -549,6 +604,8 @@ let betDown = () => {
 }
 
 let maxBet = () => {
+    clickSound.play();
+
     if(!bonusGameStarted) {
         let betArea = document.querySelector('#bet');
         let betArea2 = document.querySelector('#bet2');
@@ -641,7 +698,7 @@ let hiddenSymbol = (symbol) => {
     symbol.style.visibility = 'hidden';
 }
 
-let destroyGameAreaTurbo = async (payArray, scattersChecked) => {
+let destroyGameAreaTurbo = async (payArray, scattersChecked, isCancelled) => {
     return new Promise(async resolve => {
         for(let i = 0; i < 3; i++) {
             for(let j = 0; j < 5; j++) {
@@ -659,7 +716,9 @@ let destroyGameAreaTurbo = async (payArray, scattersChecked) => {
                 }
             }
 
-            await sleep(75);
+            if(!isCancelled) {
+                await sleep(75);
+            }
         }
 
         resolve('end');
@@ -694,36 +753,7 @@ let drawGameAreaTurbo = async (payArray, scattersChecked, timeOfDraw) => {
     })
 }
 
-let drawSpin = async (isTurbo) => {
-    let scattersChecked = 0;
-
-    try {
-        if(isTurbo) {
-            let result = await destroyGameAreaTurbo(payArray, scattersChecked);
-        } else {
-            for(let i = 0; i < 5; i++) {
-                let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
-    
-                for(let j = 0; j < 3; j++) {
-                    if(j == 0) {
-                        hiddenSymbol(firstPoint);
-                        drawSymbol(secondPoint, payArray, i, 0, scattersChecked);
-                        drawSymbol(thirdPoint, payArray, i, 5, scattersChecked);
-                    } else if(j == 1) {
-                        hiddenSymbol(secondPoint);
-                        drawSymbol(thirdPoint, payArray, i, 0, scattersChecked);
-                    } else if(j == 2) {
-                        hiddenSymbol(thirdPoint);
-                    }
-    
-                    await sleep(75);
-                }
-            }
-        }
-    } catch {
-        
-    }
-
+let updatePayArray = () => {
     payArrayIndex = 0;
 
     for(let i = 0; i < 3; i++) {
@@ -733,6 +763,10 @@ let drawSpin = async (isTurbo) => {
     }
 
     scattersChecked = 0;
+}
+
+let drawSpin = async (isTurbo) => {
+    let scattersChecked = 0;
 
     if(firstDraw) {
         for(let i = 0; i < 5; i++) {
@@ -746,7 +780,11 @@ let drawSpin = async (isTurbo) => {
                 point.className = 'point';
                 point.style.position = 'relative';
                 point.style.top = (positionTop + 170) + 'px';
-                point.style.backgroundImage = "url('images/Graj.png')";
+                if((i > 0 && i < 4) && (j == 5)) {
+                    point.style.backgroundImage = "url('images/Scatter.png')";
+                } else {
+                    point.style.backgroundImage = "url('images/Graj.png')";
+                }
 
                 gameareaCol.appendChild(point);
                 point.style.visibility = 'visible';
@@ -757,13 +795,50 @@ let drawSpin = async (isTurbo) => {
             }
         }
     } else {
+        await sleep(75);
+        cancelled = false;
+
+        if(isTurbo) {
+            let result = await destroyGameAreaTurbo(payArray, scattersChecked);
+        } else {
+            for(let i = 0; i < 5; i++) {
+                let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
+
+                for(let j = 0; j < 3; j++) {
+                    if(cancelled) {
+                        let result = await destroyGameAreaTurbo(payArray, scattersChecked, true);
+    
+                        updatePayArray();
+    
+                        result = await drawGameAreaTurbo(payArray, scattersChecked);
+                        await sleep(501);
+    
+                        return;
+                    }
+
+                    if(j == 0) {
+                        hiddenSymbol(firstPoint);
+                        drawSymbol(secondPoint, payArray, i, 0, scattersChecked);
+                        drawSymbol(thirdPoint, payArray, i, 5, scattersChecked);
+                    } else if(j == 1) {
+                        hiddenSymbol(secondPoint);
+                        drawSymbol(thirdPoint, payArray, i, 0, scattersChecked);
+                    } else if(j == 2) {
+                        hiddenSymbol(thirdPoint);
+                    }
+
+                    await sleep(75);
+                }
+            }
+        }
+
+        updatePayArray();
+
         if(isTurbo) {
             let result = await drawGameAreaTurbo(payArray, scattersChecked);
 
             await sleep(501);
         } else {
-            cancelled = false;
-            
             for(let i = 0; i < 5; i++) {
                 let timeOfDraw;
         
@@ -776,12 +851,12 @@ let drawSpin = async (isTurbo) => {
                 let firstPoint = document.getElementById(i), secondPoint = document.getElementById(i+5), thirdPoint = document.getElementById(i+10);
     
                 for(let j = 0; j < 3; j++) {
-                    // if(cancelled) {
-                    //     let result = await drawGameAreaTurbo(payArray, scattersChecked);
-                    //     await sleep(501);
+                    if(cancelled) {
+                        let result = await drawGameAreaTurbo(payArray, scattersChecked);
+                        await sleep(501);
 
-                    //     return;
-                    // }
+                        return;
+                    }
 
                     if(j == 0) {
                         drawSymbol(firstPoint, payArray, i, 10, scattersChecked);
@@ -832,6 +907,8 @@ spinButton.addEventListener('pointerdown', () => {
 })
 
 let spinWithButton = () => {
+    stopFunction();
+
     if(isLocked == false) {
         spin();
     }
@@ -912,6 +989,8 @@ let turboSpin = async () => {
 
         checkBonusBuy();
         playSpin();
+
+        cancelled = false;
         await drawSpin(true);
 
         let wonArea = document.querySelector('#won');
@@ -1008,6 +1087,8 @@ let spin = async () => {
 
         checkBonusBuy();
         playSpin();
+
+        cancelled = false;
         await drawSpin(false);
 
         let wonArea = document.querySelector('#won');
